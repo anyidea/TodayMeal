@@ -1,0 +1,15 @@
+{
+  "name": "today-meal",
+  "private": true,
+  "packageManager": "pnpm@latest",
+  "scripts": {
+    "build": "pnpm --filter @today-meal/shared build && pnpm -r --filter '!@today-meal/shared' build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm --filter @today-meal/shared build && pnpm -r typecheck",
+    "dev:api": "pnpm --filter @today-meal/shared build && pnpm --filter @today-meal/api start:dev"
+  },
+  "devDependencies": {
+    "typescript": "latest"
+  }
+}
