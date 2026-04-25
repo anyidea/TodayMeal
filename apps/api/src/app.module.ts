@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
+import { FilesModule } from './modules/files/files.module';
 import { HealthController } from './modules/health/health.controller';
+import { LinkPreviewModule } from './modules/link-preview/link-preview.module';
 import { MealHistoryModule } from './modules/meal-history/meal-history.module';
 import { MenuItemsModule } from './modules/menu-items/menu-items.module';
 import { RecommendationsModule } from './modules/recommendations/recommendations.module';
@@ -16,6 +18,8 @@ import { PrismaService } from './prisma/prisma.service';
     TagsModule,
     MealHistoryModule,
     RecommendationsModule,
+    FilesModule,
+    LinkPreviewModule,
   ],
   controllers: [HealthController],
   providers: [PrismaService],
