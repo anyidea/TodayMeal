@@ -1,14 +1,32 @@
 services:
   postgres:
     image: postgres:16
-    environment:
-      POSTGRES_USER: today_meal
-      POSTGRES_PASSWORD: today_meal_dev
-      POSTGRES_DB: today_meal
+    env_file:
+      - apps/api/.env
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file:
+      - apps/api/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+    volumes:
+      - ./apps/api/uploads:/app/apps/api/uploads
 
 volumes:
   postgres_data:
