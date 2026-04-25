@@ -1,0 +1,50 @@
+<view class="page profile-page">
+  <view class="topbar">
+    <text class="brand-title">Today Meal</text>
+    <text class="muted">我的</text>
+  </view>
+
+  <view class="profile-card card">
+    <view class="avatar">TM</view>
+    <text class="name">今天也要好好吃饭</text>
+    <text class="desc">收藏灵感、记录菜谱，让每天吃什么变简单。</text>
+  </view>
+
+  <view class="stats">
+    <view class="stat soft-card">
+      <text>36</text>
+      <text>我的菜谱</text>
+    </view>
+    <view class="stat soft-card">
+      <text>18</text>
+      <text>外卖收藏</text>
+    </view>
+    <view class="stat soft-card">
+      <text>07</text>
+      <text>本周灵感</text>
+    </view>
+  </view>
+
+  <view class="nav-bar">
+    <view class="nav-item" bindtap="goHome">
+      <t-icon class="tm-icon" name="home" size="32rpx" color="#8C7F76" />
+      <text>首页</text>
+    </view>
+    <view class="nav-item" bindtap="goRecipes">
+      <t-icon class="tm-icon" name="book-open" size="32rpx" color="#8C7F76" />
+      <text>菜谱</text>
+    </view>
+    <view class="nav-item nav-random" bindtap="goRandom">
+      <t-icon class="tm-icon" name="refresh" size="38rpx" color="#FFFFFF" />
+      <text>随机</text>
+    </view>
+    <view class="nav-item" bindtap="goFavorites">
+      <t-icon class="tm-icon" name="heart" size="32rpx" color="#8C7F76" />
+      <text>收藏</text>
+    </view>
+    <view class="nav-item active">
+      <t-icon class="tm-icon" name="user" size="32rpx" color="#B7895C" />
+      <text>我的</text>
+    </view>
+  </view>
+</view>

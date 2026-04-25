@@ -1,0 +1,37 @@
+<view class="page add-page">
+  <view class="topbar">
+    <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
+    <text class="page-title">添加菜谱</text>
+    <button class="save icon-button" bindtap="save"><t-icon class="tm-icon" name="check" size="34rpx" color="#2D2520" /></button>
+  </view>
+
+  <button class="photo-card">
+    <t-icon class="tm-icon camera" name="camera" size="48rpx" color="#B7895C" />
+    <text>上传封面</text>
+    <text class="tiny">建议尺寸 1:1</text>
+  </button>
+
+  <view class="form-card card">
+    <block wx:for="{{fields}}" wx:key="label">
+      <view class="form-row">
+        <text class="label">{{item.label}}</text>
+        <view class="field-value">
+          <input placeholder="{{item.placeholder}}" placeholder-class="placeholder" value="{{item.value}}" />
+          <text wx:if="{{item.arrow}}">›</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:for="{{addRows}}" wx:key="*this">
+      <view class="form-row">
+        <text class="label">{{item}}</text>
+        <button class="add-button"><t-icon class="tm-icon" name="add" size="30rpx" color="#B7895C" /></button>
+      </view>
+    </block>
+
+    <view class="note-block">
+      <text class="label">备注（可选）</text>
+      <textarea placeholder="记录下这道菜的小贴士吧～" placeholder-class="placeholder"></textarea>
+    </view>
+  </view>
+</view>

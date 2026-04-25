@@ -1,0 +1,120 @@
+.add-page {
+  padding-bottom: 56rpx;
+}
+
+.back {
+  color: #2d2520;
+}
+
+.save {
+  color: #2d2520;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.icon-button .tm-icon {
+  width: 34rpx;
+  height: 34rpx;
+}
+
+.page-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.photo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10rpx;
+  width: 260rpx;
+  height: 224rpx;
+  margin: 34rpx auto 26rpx;
+  border: 1rpx dashed #efe7e1;
+  border-radius: 28rpx;
+  background: #f7f1ec;
+  color: #8c7f76;
+  font-size: 24rpx;
+}
+
+.camera {
+  color: #b7895c;
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.form-card {
+  padding: 10rpx 28rpx 28rpx;
+  box-shadow: none;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 92rpx;
+  border-bottom: 1rpx solid #efe7e1;
+}
+
+.label {
+  color: #2d2520;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.field-value {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14rpx;
+  color: #c5beb8;
+}
+
+.field-value input {
+  flex: 1;
+  text-align: right;
+  color: #2d2520;
+  font-size: 24rpx;
+}
+
+.placeholder {
+  color: #c5beb8;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  color: #b7895c;
+}
+
+.add-button .tm-icon {
+  width: 30rpx;
+  height: 30rpx;
+}
+
+.note-block {
+  padding-top: 26rpx;
+}
+
+.note-block textarea {
+  width: 100%;
+  min-height: 180rpx;
+  margin-top: 18rpx;
+  padding: 22rpx;
+  border-radius: 24rpx;
+  background: #fff8f5;
+  color: #2d2520;
+  font-size: 24rpx;
+}

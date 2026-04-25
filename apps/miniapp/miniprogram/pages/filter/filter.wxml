@@ -1,0 +1,57 @@
+<view class="page filter-page">
+  <view class="topbar">
+    <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
+    <text class="page-title">筛选条件</text>
+    <button class="reset" bindtap="reset">重置</button>
+  </view>
+
+  <view class="filter-section">
+    <text class="filter-title">场景</text>
+    <view class="chip-grid">
+      <block wx:for="{{scene}}" wx:key="label">
+        <view class="chip chip-stack {{selected.scene === index ? 'active' : ''}}" data-key="scene" data-index="{{index}}" bindtap="choose">
+          <t-icon class="chip-icon" name="{{item.icon}}" size="34rpx" color="{{selected.scene === index ? '#B7895C' : '#8C7F76'}}" />
+          <text class="chip-label">{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <text class="filter-title">类型</text>
+    <view class="chip-grid">
+      <block wx:for="{{type}}" wx:key="*this">
+        <view class="chip {{selected.type === index ? 'active' : ''}}" data-key="type" data-index="{{index}}" bindtap="choose">{{item}}</view>
+      </block>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <text class="filter-title">口味</text>
+    <view class="chip-grid">
+      <block wx:for="{{taste}}" wx:key="*this">
+        <view class="chip {{selected.taste === index ? 'active' : ''}}" data-key="taste" data-index="{{index}}" bindtap="choose">{{item}}</view>
+      </block>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <text class="filter-title">烹饪方式</text>
+    <view class="chip-grid">
+      <block wx:for="{{methods}}" wx:key="*this">
+        <view class="chip {{selected.methods === index ? 'active' : ''}}" data-key="methods" data-index="{{index}}" bindtap="choose">{{item}}</view>
+      </block>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <text class="filter-title">食材（可多选）</text>
+    <view class="chip-grid">
+      <block wx:for="{{ingredients}}" wx:key="*this">
+        <view class="chip {{selected.ingredients === index ? 'active' : ''}}" data-key="ingredients" data-index="{{index}}" bindtap="choose">{{item}}</view>
+      </block>
+    </view>
+  </view>
+
+  <button class="primary-button submit" bindtap="submit">完成筛选</button>
+</view>

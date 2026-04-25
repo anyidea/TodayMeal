@@ -1,0 +1,67 @@
+<view class="page list-page">
+  <view class="topbar">
+    <text class="page-title">我的菜谱</text>
+    <view class="tools">
+      <t-icon class="tm-icon" name="search" size="34rpx" color="#2D2520" />
+      <button class="icon-button" bindtap="goAdd"><t-icon class="tm-icon" name="add" size="34rpx" color="#2D2520" /></button>
+    </view>
+  </view>
+
+  <button class="add-banner" bindtap="goAdd">
+    <view>
+      <text>添加菜谱</text>
+      <text>记录家常菜、步骤和食材</text>
+    </view>
+    <t-icon name="chevron-right" size="30rpx" color="#B7895C" />
+  </button>
+
+  <scroll-view class="tabs" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="tab-row">
+      <block wx:for="{{tabs}}" wx:key="*this">
+        <view class="tab {{activeTab === index ? 'active' : ''}}" data-index="{{index}}" bindtap="chooseTab">{{item}}</view>
+      </block>
+    </view>
+  </scroll-view>
+
+  <view class="recipe-list">
+    <block wx:for="{{recipes}}" wx:key="name">
+      <view class="recipe-item soft-card">
+        <image class="recipe-img" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="recipe-info">
+          <view class="recipe-top">
+            <text class="recipe-name">{{item.name}}</text>
+            <t-icon class="tm-icon more" name="more" size="30rpx" color="#C5BEB8" />
+          </view>
+          <text class="recipe-meta">{{item.meta}}</text>
+          <view class="recipe-bottom">
+            <view><t-icon class="tm-icon icon-inline" name="time" size="20rpx" color="#C5BEB8" /><text>{{item.time}}</text></view>
+            <view><t-icon class="tm-icon icon-inline" name="heart" size="20rpx" color="#C5BEB8" /><text>{{item.likes}}</text></view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="nav-bar">
+    <view class="nav-item" bindtap="goHome">
+      <t-icon class="tm-icon" name="home" size="32rpx" color="#8C7F76" />
+      <text>首页</text>
+    </view>
+    <view class="nav-item active">
+      <t-icon class="tm-icon" name="book-open" size="32rpx" color="#B7895C" />
+      <text>菜谱</text>
+    </view>
+    <view class="nav-item nav-random" bindtap="goRandom">
+      <t-icon class="tm-icon" name="refresh" size="38rpx" color="#FFFFFF" />
+      <text>随机</text>
+    </view>
+    <view class="nav-item" bindtap="goFavorites">
+      <t-icon class="tm-icon" name="heart" size="32rpx" color="#8C7F76" />
+      <text>收藏</text>
+    </view>
+    <view class="nav-item" bindtap="goProfile">
+      <t-icon class="tm-icon" name="user" size="32rpx" color="#8C7F76" />
+      <text>我的</text>
+    </view>
+  </view>
+</view>

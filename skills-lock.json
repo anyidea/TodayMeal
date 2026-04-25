@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "miniprogram-development": {
+      "source": "tencentcloudbase/skills",
+      "sourceType": "github",
+      "computedHash": "52742579968e9a29813a93a8c833fb1b5fb5703d8fe6d58fa450b0f13424c048"
+    }
+  }
+}

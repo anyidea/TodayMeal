@@ -1,0 +1,103 @@
+<view class="page home-page">
+  <view class="topbar">
+    <text class="brand-title">Today Meal</text>
+    <view class="top-actions">
+      <t-icon class="tm-icon" name="more" size="30rpx" color="#FFFFFF" />
+      <view class="capsule-divider"></view>
+      <t-icon class="tm-icon" name="rice-ball" size="30rpx" color="#FFFFFF" />
+    </view>
+  </view>
+
+  <view class="greeting card">
+    <view>
+      <text class="hello">Hi，今天想吃点什么呢？</text>
+      <text class="hint">让我们一起找到今天的灵感菜单。</text>
+    </view>
+    <view class="mascot">
+      <t-icon class="tm-icon tm-icon-heart" name="heart" size="30rpx" color="#FF6B6B" />
+      <t-icon class="tm-icon tm-icon-soup" name="rice-ball" size="54rpx" color="#B7895C" />
+    </view>
+  </view>
+
+  <view class="hero card">
+    <view class="hero-bg"></view>
+    <view class="hero-content">
+      <text class="hero-title">随机推荐</text>
+      <text class="hero-subtitle">为你和胃口搭一个天作之合</text>
+      <button class="hero-button" bindtap="goFilter">开始筛选 <t-icon class="tm-icon icon-inline" name="setting" size="24rpx" color="#2D2520" /></button>
+    </view>
+    <view class="dish-bubbles">
+      <block wx:for="{{miniDishes}}" wx:key="*this">
+        <image class="dish-bubble" src="{{item}}" mode="aspectFill"></image>
+      </block>
+    </view>
+  </view>
+
+  <view class="quick-grid">
+    <button class="quick-card soft-card" bindtap="goRecipes">
+      <view>
+        <text class="quick-title">我的菜谱</text>
+        <text class="quick-subtitle">查看 / 新增菜谱</text>
+      </view>
+      <view class="quick-icon"><t-icon class="tm-icon" name="grid-view" size="30rpx" color="#B7895C" /></view>
+    </button>
+    <button class="quick-card soft-card" bindtap="goFavorites">
+      <view>
+        <text class="quick-title">外卖收藏</text>
+        <text class="quick-subtitle">查看 / 新增外卖</text>
+      </view>
+      <view class="quick-icon"><t-icon class="tm-icon" name="app" size="30rpx" color="#B7895C" /></view>
+    </button>
+  </view>
+
+  <view class="add-actions">
+    <button class="add-action primary" bindtap="goAddRecipe">
+      <t-icon name="add" size="28rpx" color="#FFFFFF" />
+      <text>添加菜谱</text>
+    </button>
+    <button class="add-action" bindtap="goAddTakeout">
+      <t-icon name="shop" size="28rpx" color="#B7895C" />
+      <text>添加外卖</text>
+    </button>
+  </view>
+
+  <view class="section-head">
+    <text class="section-title">今日灵感</text>
+    <button class="section-action" bindtap="goRandom">换一换 <t-icon class="tm-icon icon-inline" name="refresh" size="24rpx" color="#B7895C" /></button>
+  </view>
+
+  <scroll-view class="inspiration-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="dish-row">
+      <block wx:for="{{dishes}}" wx:key="name">
+        <view class="dish-card soft-card">
+          <image class="dish-cover" src="{{item.image}}" mode="aspectFill"></image>
+          <text class="dish-name">{{item.name}}</text>
+          <text class="dish-meta">{{item.meta}}</text>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+
+  <view class="nav-bar">
+    <view class="nav-item active">
+      <t-icon class="tm-icon" name="home" size="32rpx" color="#B7895C" />
+      <text>首页</text>
+    </view>
+    <view class="nav-item" bindtap="goRecipes">
+      <t-icon class="tm-icon" name="book-open" size="32rpx" color="#8C7F76" />
+      <text>菜谱</text>
+    </view>
+    <view class="nav-item nav-random" bindtap="goRandom">
+      <t-icon class="tm-icon" name="refresh" size="38rpx" color="#FFFFFF" />
+      <text>随机</text>
+    </view>
+    <view class="nav-item" bindtap="goFavorites">
+      <t-icon class="tm-icon" name="heart" size="32rpx" color="#8C7F76" />
+      <text>收藏</text>
+    </view>
+    <view class="nav-item" bindtap="goProfile">
+      <t-icon class="tm-icon" name="user" size="32rpx" color="#8C7F76" />
+      <text>我的</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,66 @@
+.profile-page {
+  padding-bottom: 170rpx;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 42rpx;
+  padding: 48rpx 34rpx;
+  text-align: center;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 50%;
+  background: #b7895c;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.name {
+  margin-top: 24rpx;
+  color: #2d2520;
+  font-size: 34rpx;
+  font-weight: 800;
+}
+
+.desc {
+  margin-top: 12rpx;
+  color: #8c7f76;
+  font-size: 24rpx;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18rpx;
+  margin-top: 24rpx;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  height: 150rpx;
+}
+
+.stat text:first-child {
+  color: #b7895c;
+  font-size: 40rpx;
+  font-weight: 800;
+}
+
+.stat text:last-child {
+  margin-top: 8rpx;
+  color: #8c7f76;
+  font-size: 22rpx;
+}

@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/filter/filter",
+    "pages/result/result",
+    "pages/recipes/recipes",
+    "pages/add-recipe/add-recipe",
+    "pages/favorites/favorites",
+    "pages/add-takeout/add-takeout",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundTextStyle": "light",
+    "backgroundColor": "#FFF8F5"
+  },
+  "usingComponents": {
+    "t-icon": "tdesign-miniprogram/icon/icon"
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

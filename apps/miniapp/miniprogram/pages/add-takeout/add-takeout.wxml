@@ -1,0 +1,31 @@
+<view class="page add-takeout-page">
+  <view class="topbar">
+    <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
+    <text class="page-title">添加外卖</text>
+    <button class="save icon-button" bindtap="save"><t-icon class="tm-icon" name="check" size="34rpx" color="#2D2520" /></button>
+  </view>
+
+  <view class="hero-card card">
+    <view class="hero-icon">
+      <t-icon name="shop" size="44rpx" color="#B7895C" />
+    </view>
+    <view>
+      <text class="hero-title">收藏常点外卖</text>
+      <text class="hero-desc">把想吃的店、套餐和价格记下来，下次不用再纠结。</text>
+    </view>
+  </view>
+
+  <view class="form-card card">
+    <block wx:for="{{fields}}" wx:key="label">
+      <view class="form-row">
+        <text class="label">{{item.label}}</text>
+        <input placeholder="{{item.placeholder}}" placeholder-class="placeholder" />
+      </view>
+    </block>
+
+    <view class="note-block">
+      <text class="label">备注（可选）</text>
+      <textarea placeholder="比如配送快、分量足、适合加班夜宵～" placeholder-class="placeholder"></textarea>
+    </view>
+  </view>
+</view>

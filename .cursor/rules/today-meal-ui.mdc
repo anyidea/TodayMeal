@@ -1,7 +1,7 @@
 ---
 description: Today Meal miniapp UI design system
 globs: apps/miniapp/miniprogram/**/*.{wxml,wxss,ts,json}
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Today Meal UI Design System

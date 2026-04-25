@@ -8,3 +8,5 @@ dist/
 !.env.example
 apps/api/uploads/
 apps/miniapp/project.private.config.json
+apps/miniapp/miniprogram/node_modules/
+apps/miniapp/miniprogram/miniprogram_npm/
