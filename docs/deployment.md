@@ -21,6 +21,8 @@ Edit `apps/api/.env` and replace every placeholder value:
 
 - Use the same strong PostgreSQL password in `POSTGRES_PASSWORD` and `DATABASE_URL`.
 - Keep `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` aligned with the credentials and database name in `DATABASE_URL`.
+- Set `NODE_ENV=production`.
+- Keep `ENABLE_DEV_LOGIN=false` in production. `/auth/dev-login` is only for local development or tests.
 - Set a `JWT_SECRET` with at least 32 characters.
 - Fill in the production WeChat Mini Program credentials.
 - Set `EDITOR_INVITE_CODE` and `OWNER_OPENIDS` for the production team.
@@ -43,6 +45,8 @@ api.today-meal.example.com {
 
 Adjust the domain before using it in production.
 
+Uploaded images are served by the API under `/uploads/...`, so the same reverse proxy to `api:3000` also serves uploaded image URLs.
+
 ## Start Services
 
 Build and start the API and PostgreSQL services:
@@ -52,6 +56,8 @@ docker compose up -d --build
 ```
 
 The compose file keeps PostgreSQL available on the host at `localhost:5433` for local maintenance. Host-run development tools can use `localhost:5433`, but containers must use `postgres:5432` internally through `DATABASE_URL`.
+
+For local full-stack Docker Compose, `apps/api/.env.example` uses `postgres:5432` because the API container resolves the Compose service name. If you run the API directly on the host instead of in Docker, change `DATABASE_URL` in your local, uncommitted `apps/api/.env` to use `localhost:5433`.
 
 ## Run Migrations
 

@@ -125,8 +125,8 @@ export class AuthService {
 
   private isDevLoginEnabled(): boolean {
     return (
-      this.configService.get<string>('NODE_ENV') !== 'production' ||
-      this.configService.get<string>('ENABLE_DEV_LOGIN') === 'true'
+      this.configService.get<string>('ENABLE_DEV_LOGIN') === 'true' ||
+      this.configService.get<string>('NODE_ENV') === 'test'
     );
   }
 

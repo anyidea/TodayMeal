@@ -1,5 +1,5 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import * as dns from 'node:dns/promises';
 import { mkdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -7,6 +7,7 @@ import path from 'node:path';
 import request from 'supertest';
 import { fetch as undiciFetch } from 'undici';
 import { AppModule } from '../src/app.module';
+import { configureApiApplication } from '../src/configure-api-application';
 import { PrismaService } from '../src/prisma/prisma.service';
 
 jest.mock('node:dns/promises', () => ({
@@ -21,7 +22,7 @@ jest.mock('undici', () => {
 });
 
 async function createEditorToken(
-  app: INestApplication,
+  app: NestExpressApplication,
   prisma: PrismaService,
 ): Promise<string> {
   await prisma.user.upsert({
@@ -50,7 +51,7 @@ const tinyJpeg = Buffer.from([0xff, 0xd8, 0xff, 0xdb, 0x00, 0x43, 0x00, 0xff, 0x
 const tinyGif = Buffer.from('GIF89a');
 
 describe('Files and link preview', () => {
-  let app: INestApplication;
+  let app: NestExpressApplication;
   let prisma: PrismaService;
   let uploadDir: string;
 
@@ -70,14 +71,8 @@ describe('Files and link preview', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-      }),
-    );
+    app = moduleRef.createNestApplication<NestExpressApplication>();
+    configureApiApplication(app);
     await app.init();
     prisma = app.get(PrismaService);
   });
@@ -115,6 +110,8 @@ describe('Files and link preview', () => {
   it('allows editors to upload a small image', async () => {
     const token = await createEditorToken(app, prisma);
 
+    let uploadedPath = '';
+
     await request(app.getHttpServer())
       .post('/files/upload')
       .set('Authorization', `Bearer ${token}`)
@@ -130,7 +127,13 @@ describe('Files and link preview', () => {
         );
         expect(body.data.mimeType).toBe('image/jpeg');
         expect(body.data.size).toBe(tinyJpeg.byteLength);
+        uploadedPath = new URL(body.data.url).pathname;
       });
+
+    await request(app.getHttpServer())
+      .get(uploadedPath)
+      .expect(200)
+      .expect('Content-Type', /image\/jpeg/);
 
     await expect(prisma.fileAsset.count()).resolves.toBe(1);
   });

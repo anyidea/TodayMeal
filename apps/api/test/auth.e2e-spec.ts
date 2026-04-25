@@ -74,6 +74,26 @@ describe('Auth', () => {
       .expect(403);
   });
 
+  it('disables dev login by default when not explicitly enabled', async () => {
+    delete process.env.NODE_ENV;
+    delete process.env.ENABLE_DEV_LOGIN;
+
+    await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'user-openid' })
+      .expect(403);
+  });
+
+  it('allows dev login in test without the explicit flag', async () => {
+    process.env.NODE_ENV = 'test';
+    delete process.env.ENABLE_DEV_LOGIN;
+
+    await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'user-openid' })
+      .expect(201);
+  });
+
   it('rejects wrong invite code', async () => {
     const login = await request(app.getHttpServer())
       .post('/auth/dev-login')
