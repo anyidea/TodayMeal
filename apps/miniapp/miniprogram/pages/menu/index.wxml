@@ -1,17 +1,25 @@
 <view class="page menu-page">
-  <view class="top-card card">
+  <view class="top-card">
     <view class="eyebrow">MENU JOURNAL</view>
-    <view class="headline">把想吃的，都好好收在这里。</view>
+    <view class="headline">今天的菜单库</view>
+    <view class="subline">家常菜、外卖和灵感，都按喜欢的方式收好。</view>
     <view class="search-row">
       <input class="search" placeholder="搜菜名、餐厅、备注" value="{{q}}" bindinput="handleSearch" confirm-type="search" />
-      <button class="add-btn" bindtap="goAdd">添加</button>
+      <button class="filter-btn" bindtap="openFilter">筛选</button>
     </view>
+  </view>
+
+  <view class="filter-panel card">
     <tag-filter title="类型" field="type" active="{{activeType}}" options="{{typeOptions}}" bind:change="handleFilterChange" />
     <tag-filter title="时段" field="mealPeriod" active="{{activeMealPeriod}}" options="{{mealPeriodOptions}}" bind:change="handleFilterChange" />
+    <view wx:if="{{activeTag}}" class="active-tag-row">
+      <text>已选标签：{{activeTag}}</text>
+      <text class="clear" bindtap="resetFilters">重置</text>
+    </view>
   </view>
 
   <view class="list-head">
-    <text>菜单卡片</text>
+    <text>菜谱清单</text>
     <text class="count">{{items.length}} 道</text>
   </view>
 
@@ -24,4 +32,6 @@
     <view class="empty-text">可以从一道家常菜、一个外卖链接，或一条灵感笔记开始。</view>
     <button class="empty-action" bindtap="goAdd">添加菜单</button>
   </view>
+
+  <button class="float-add" bindtap="goAdd">添加</button>
 </view>

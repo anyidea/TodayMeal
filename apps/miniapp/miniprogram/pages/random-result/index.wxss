@@ -1,0 +1,162 @@
+.random-page {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(183, 137, 92, 0.18), transparent 42%),
+    linear-gradient(180deg, #fff8f5 0%, #f5eae2 100%);
+}
+
+.title-block {
+  padding: 10rpx 4rpx 30rpx;
+  text-align: center;
+}
+
+.eyebrow {
+  color: var(--color-primary);
+  font-size: 22rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+}
+
+.headline {
+  margin-top: 16rpx;
+  color: var(--color-text);
+  font-size: 58rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.subline,
+.result-desc,
+.empty-text {
+  color: var(--color-muted);
+  font-size: 26rpx;
+  line-height: 1.55;
+}
+
+.subline {
+  margin-top: 14rpx;
+}
+
+.result-card {
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.result-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 470rpx;
+  color: rgba(45, 37, 32, 0.42);
+  font-size: 30rpx;
+  letter-spacing: 4rpx;
+  background: linear-gradient(135deg, #f1d8c9, #fff8f5);
+}
+
+.result-body {
+  padding: 34rpx;
+}
+
+.result-kicker {
+  color: var(--color-primary);
+  font-size: 22rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+}
+
+.result-title {
+  margin-top: 14rpx;
+  color: var(--color-text);
+  font-size: 46rpx;
+  font-weight: 900;
+  line-height: 1.16;
+}
+
+.result-desc {
+  margin-top: 14rpx;
+}
+
+.tag-row,
+.pair-list,
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.tag-row {
+  margin-top: 24rpx;
+}
+
+.tag,
+.pair-item {
+  padding: 10rpx 18rpx;
+  color: var(--color-primary);
+  font-size: 23rpx;
+  font-weight: 700;
+  background: #f8eee8;
+  border-radius: 999rpx;
+}
+
+.action-row {
+  margin-top: 24rpx;
+}
+
+.primary,
+.secondary,
+.eat-button {
+  flex: 1;
+  margin: 0;
+  padding: 22rpx 28rpx;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 1.2;
+  border-radius: 999rpx;
+}
+
+.primary,
+.eat-button {
+  color: #ffffff;
+  background: var(--color-primary);
+  box-shadow: 0 12rpx 32rpx rgba(183, 137, 92, 0.25);
+}
+
+.primary.drawing {
+  opacity: 0.72;
+}
+
+.secondary {
+  color: var(--color-primary);
+  background: #ffffff;
+  border: 1rpx solid var(--color-line);
+}
+
+.eat-button {
+  width: 100%;
+  margin-top: 18rpx;
+}
+
+.pair-card,
+.empty {
+  margin-top: 26rpx;
+  padding: 34rpx;
+}
+
+.section-title,
+.empty-title {
+  color: var(--color-text);
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.pair-list {
+  margin-top: 22rpx;
+}
+
+.empty {
+  text-align: center;
+}
+
+.empty-text {
+  margin: 14rpx 0 26rpx;
+}

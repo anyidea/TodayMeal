@@ -9,6 +9,7 @@
       bindtap="switchTab"
     >
       <cover-view class="tab-indicator"></cover-view>
+      <cover-view class="tab-mark"></cover-view>
       <cover-view class="tab-label">{{item.text}}</cover-view>
     </cover-view>
   </cover-view>

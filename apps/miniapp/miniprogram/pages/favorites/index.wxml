@@ -1,0 +1,29 @@
+<view class="page favorites-page">
+  <view class="top">
+    <view>
+      <view class="eyebrow">FAVORITE BITES</view>
+      <view class="headline">外卖收藏夹</view>
+      <view class="subline">默认看外卖收藏，也可以切到全部心动菜单。</view>
+    </view>
+    <button class="add-btn" bindtap="goAddTakeout">添加外卖</button>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x enable-flex>
+    <view class="filter-row">
+      <button class="chip {{active === 'takeout' ? 'active' : ''}}" data-value="takeout" bindtap="setFilter">外卖</button>
+      <button class="chip {{active === 'recipe' ? 'active' : ''}}" data-value="recipe" bindtap="setFilter">菜谱</button>
+      <button class="chip {{active === 'inspiration' ? 'active' : ''}}" data-value="inspiration" bindtap="setFilter">灵感</button>
+      <button class="chip {{active === 'all' ? 'active' : ''}}" data-value="all" bindtap="setFilter">全部心动</button>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{items.length}}" class="list">
+    <menu-card wx:for="{{items}}" wx:key="id" item="{{item}}" />
+  </view>
+
+  <view wx:else class="empty card">
+    <view class="empty-title">还没有收藏</view>
+    <view class="empty-text">把常点的美团、淘宝闪购或小程序链接收进来，下次点餐更轻松。</view>
+    <button class="empty-action" bindtap="goAddTakeout">添加外卖</button>
+  </view>
+</view>

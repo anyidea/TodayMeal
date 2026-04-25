@@ -4,6 +4,9 @@
     "pages/menu/index",
     "pages/menu-detail/index",
     "pages/menu-edit/index",
+    "pages/filter/index",
+    "pages/random-result/index",
+    "pages/favorites/index",
     "pages/profile/index"
   ],
   "window": {
@@ -18,8 +21,10 @@
     "selectedColor": "#111827",
     "backgroundColor": "#FFFFFF",
     "list": [
-      { "pagePath": "pages/today/index", "text": "今天" },
-      { "pagePath": "pages/menu/index", "text": "菜单" },
+      { "pagePath": "pages/today/index", "text": "首页" },
+      { "pagePath": "pages/menu/index", "text": "菜谱" },
+      { "pagePath": "pages/random-result/index", "text": "随机" },
+      { "pagePath": "pages/favorites/index", "text": "收藏" },
       { "pagePath": "pages/profile/index", "text": "我的" }
     ]
   },

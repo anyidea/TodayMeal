@@ -1,11 +1,19 @@
 <view class="menu-card" bindtap="handleTap">
   <image wx:if="{{item.coverImageUrl}}" class="cover" src="{{item.coverImageUrl}}" mode="aspectFill" />
-  <view wx:else class="cover empty-cover">Today Meal</view>
+  <view wx:else class="cover empty-cover">Meal</view>
   <view class="body">
+    <view class="meta-row">
+      <text class="type">{{typeLabel}}</text>
+      <text wx:if="{{item.isFavorite}}" class="favorite">已收藏</text>
+    </view>
     <view class="title">{{item.title}}</view>
-    <view class="subtitle">{{item.subtitle}}</view>
+    <view class="subtitle">{{subtitleText}}</view>
     <view class="tags">
       <text wx:for="{{item.tags}}" wx:key="name" class="tag">{{item.name}}</text>
+    </view>
+    <view class="footer">
+      <text>{{mealPeriodText || '随时都可以'}}</text>
+      <text>{{extraText}}</text>
     </view>
   </view>
 </view>

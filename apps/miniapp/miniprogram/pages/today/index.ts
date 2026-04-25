@@ -4,6 +4,7 @@ import type { MenuItemView, RecommendationView } from '../../types';
 type TodayPageData = {
   recommendation?: RecommendationView;
   menuItems: MenuItemView[];
+  takeoutItems: MenuItemView[];
   drawing: boolean;
 };
 
@@ -11,11 +12,16 @@ Page<TodayPageData, {
   loadToday: () => Promise<void>;
   drawRandom: () => Promise<void>;
   goMenu: () => void;
+  goFilter: () => void;
+  goRandom: () => void;
+  goFavorites: () => void;
+  goDetail: (event: WechatMiniprogram.TouchEvent) => void;
   goEdit: () => void;
 }>({
   data: {
     recommendation: undefined,
     menuItems: [],
+    takeoutItems: [],
     drawing: false,
   },
 
@@ -26,14 +32,16 @@ Page<TodayPageData, {
 
   async loadToday() {
     try {
-      const [recommendation, menuItems] = await Promise.all([
+      const [recommendation, menuItems, takeoutItems] = await Promise.all([
         api.get<RecommendationView>('/recommendations/today'),
-        api.get<MenuItemView[]>('/menu-items?limit=10'),
+        api.get<MenuItemView[]>('/menu-items?limit=8'),
+        api.get<MenuItemView[]>('/menu-items?type=takeout&favorite=true&limit=6'),
       ]);
 
       this.setData({
         recommendation,
         menuItems,
+        takeoutItems,
       });
     } catch {
       wx.showToast({
@@ -67,6 +75,35 @@ Page<TodayPageData, {
   goMenu() {
     wx.switchTab({
       url: '/pages/menu/index',
+    });
+  },
+
+  goFilter() {
+    wx.navigateTo({
+      url: '/pages/filter/index',
+    });
+  },
+
+  goRandom() {
+    wx.switchTab({
+      url: '/pages/random-result/index',
+    });
+  },
+
+  goFavorites() {
+    wx.switchTab({
+      url: '/pages/favorites/index',
+    });
+  },
+
+  goDetail(event) {
+    const id = event.currentTarget.dataset.id as string;
+    if (!id) {
+      return;
+    }
+
+    wx.navigateTo({
+      url: `/pages/menu-detail/index?id=${id}`,
     });
   },
 

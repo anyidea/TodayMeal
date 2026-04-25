@@ -11,6 +11,7 @@ type FilterOption = {
 
 type MenuPageData = {
   q: string;
+  activeTag: string;
   activeType: MenuFilterType;
   activeMealPeriod: MenuFilterMealPeriod;
   items: MenuItemView[];
@@ -50,6 +51,10 @@ function buildQuery(data: MenuPageData): string {
     params.push(`mealPeriod=${data.activeMealPeriod}`);
   }
 
+  if (data.activeTag) {
+    params.push(`tag=${encodeURIComponent(data.activeTag)}`);
+  }
+
   return params.length ? `?${params.join('&')}` : '';
 }
 
@@ -57,10 +62,13 @@ Page<MenuPageData, {
   loadItems: () => Promise<void>;
   handleSearch: (event: WechatMiniprogram.Input) => void;
   handleFilterChange: (event: WechatMiniprogram.CustomEvent) => void;
+  openFilter: () => void;
+  resetFilters: () => void;
   goAdd: () => void;
 }>({
   data: {
     q: '',
+    activeTag: '',
     activeType: 'all',
     activeMealPeriod: 'all',
     items: [],
@@ -71,6 +79,18 @@ Page<MenuPageData, {
 
   onShow() {
     this.getTabBar()?.setData({ selected: 1 });
+    const stored = wx.getStorageSync('todayMealFilter') as
+      | Partial<Pick<MenuPageData, 'activeType' | 'activeMealPeriod' | 'activeTag' | 'q'>>
+      | '';
+    if (stored) {
+      this.setData({
+        q: stored.q || this.data.q,
+        activeTag: stored.activeTag || '',
+        activeType: stored.activeType || 'all',
+        activeMealPeriod: stored.activeMealPeriod || 'all',
+      });
+      wx.removeStorageSync('todayMealFilter');
+    }
     void this.loadItems();
   },
 
@@ -105,6 +125,22 @@ Page<MenuPageData, {
       this.setData({ activeMealPeriod: value as MenuFilterMealPeriod });
     }
 
+    void this.loadItems();
+  },
+
+  openFilter() {
+    wx.navigateTo({
+      url: '/pages/filter/index',
+    });
+  },
+
+  resetFilters() {
+    this.setData({
+      q: '',
+      activeTag: '',
+      activeType: 'all',
+      activeMealPeriod: 'all',
+    });
     void this.loadItems();
   },
 

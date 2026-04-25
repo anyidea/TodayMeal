@@ -40,7 +40,7 @@ Page<ProfilePageData, {
   },
 
   onShow() {
-    this.getTabBar()?.setData({ selected: 2 });
+    this.getTabBar()?.setData({ selected: 4 });
     void this.refresh();
   },
 

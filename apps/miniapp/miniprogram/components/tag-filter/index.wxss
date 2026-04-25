@@ -4,9 +4,10 @@
 
 .filter-title {
   margin-bottom: 14rpx;
-  color: #526456;
+  color: var(--color-muted);
   font-size: 23rpx;
-  letter-spacing: 3rpx;
+  font-weight: 800;
+  letter-spacing: 2rpx;
 }
 
 .scroll {
@@ -24,11 +25,12 @@
   min-width: 0;
   margin: 0;
   padding: 14rpx 24rpx;
-  color: #526456;
+  color: var(--color-muted);
   font-size: 25rpx;
+  font-weight: 700;
   line-height: 1.2;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1rpx solid rgba(122, 138, 125, 0.18);
+  background: #fff8f5;
+  border: 1rpx solid var(--color-line);
   border-radius: 999rpx;
 }
 
@@ -37,9 +39,9 @@
 }
 
 .chip.active {
-  color: #17211b;
-  font-weight: 700;
-  background: linear-gradient(135deg, #bef264, #fef08a);
-  border-color: rgba(190, 242, 100, 0.62);
-  box-shadow: 0 12rpx 28rpx rgba(190, 242, 100, 0.22);
+  color: #ffffff;
+  font-weight: 900;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 10rpx 26rpx rgba(183, 137, 92, 0.22);
 }

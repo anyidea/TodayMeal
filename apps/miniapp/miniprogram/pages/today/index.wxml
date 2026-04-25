@@ -1,19 +1,26 @@
 <view class="page today-page">
-  <view class="hero">
+  <view class="home-head">
     <view>
-      <view class="eyebrow">TODAY'S NOTE</view>
-      <view class="headline">今天想把哪一口幸福端上桌？</view>
-      <view class="caption">给你挑一份刚刚好的灵感，也留一点小惊喜。</view>
+      <view class="hello">今天吃什么</view>
+      <view class="date">给她挑一份刚刚好的幸福感</view>
     </view>
-    <button class="primary-action {{drawing ? 'drawing' : ''}}" bindtap="drawRandom" loading="{{drawing}}">
-      {{drawing ? '正在翻菜单' : '抽一下'}}
-    </button>
+    <button class="add-mini" bindtap="goEdit">添加</button>
   </view>
 
-  <view wx:if="{{recommendation}}" class="recommend card">
-    <view class="section-label">今日推荐</view>
-    <menu-card item="{{recommendation.item}}" />
-    <view class="reason">因为：{{recommendation.reason}}</view>
+  <view wx:if="{{recommendation}}" class="hero-card card">
+    <view class="hero-copy">
+      <view class="hero-kicker">今日推荐</view>
+      <view class="hero-title">{{recommendation.item.title}}</view>
+      <view class="hero-desc">{{recommendation.reason}}</view>
+      <view class="hero-actions">
+        <button class="primary-action {{drawing ? 'drawing' : ''}}" bindtap="drawRandom" loading="{{drawing}}">
+          {{drawing ? '翻菜单中' : '换一道'}}
+        </button>
+        <button class="ghost-action" bindtap="goRandom">仪式抽选</button>
+      </view>
+    </view>
+    <image wx:if="{{recommendation.item.coverImageUrl}}" class="hero-image" src="{{recommendation.item.coverImageUrl}}" mode="aspectFill" />
+    <view wx:else class="hero-image empty-cover">Today Meal</view>
   </view>
 
   <view wx:else class="empty card">
@@ -22,15 +29,43 @@
     <button class="ghost-action" bindtap="goEdit">添加一道</button>
   </view>
 
-  <view class="journal-head">
-    <view>
-      <view class="section-label">菜单手札</view>
-      <view class="section-title">最近可以考虑的 10 个选择</view>
+  <view class="quick-grid">
+    <view class="quick-card card" bindtap="goFilter">
+      <view class="quick-title">按心情筛选</view>
+      <view class="quick-desc">早餐、晚餐、清淡、热乎</view>
     </view>
-    <text class="link" bindtap="goMenu">看全部</text>
+    <view class="quick-card card accent" bindtap="goFavorites">
+      <view class="quick-title">外卖收藏</view>
+      <view class="quick-desc">美团 / 淘宝闪购 / 小程序</view>
+    </view>
   </view>
 
-  <view class="grid">
-    <menu-card wx:for="{{menuItems}}" wx:key="id" item="{{item}}" />
+  <view class="section-head">
+    <view>
+      <view class="section-label">今日灵感</view>
+      <view class="section-title">最近可以考虑的选择</view>
+    </view>
+    <text class="link" bindtap="goMenu">全部</text>
+  </view>
+
+  <scroll-view wx:if="{{menuItems.length}}" class="inspiration-scroll" scroll-x enable-flex>
+    <view class="inspiration-row">
+      <view wx:for="{{menuItems}}" wx:key="id" class="inspiration-card" data-id="{{item.id}}" bindtap="goDetail">
+        <image wx:if="{{item.coverImageUrl}}" class="inspiration-image" src="{{item.coverImageUrl}}" mode="aspectFill" />
+        <view wx:else class="inspiration-image empty-cover">Meal</view>
+        <view class="inspiration-title">{{item.title}}</view>
+        <view class="inspiration-subtitle">{{item.subtitle || '今天也可以吃这个'}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{takeoutItems.length}}" class="section-head takeout-head">
+    <view>
+      <view class="section-label">外卖灵感</view>
+      <view class="section-title">她可能想点的</view>
+    </view>
+  </view>
+  <view wx:if="{{takeoutItems.length}}" class="list">
+    <menu-card wx:for="{{takeoutItems}}" wx:key="id" item="{{item}}" />
   </view>
 </view>
