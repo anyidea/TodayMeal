@@ -2,11 +2,13 @@
   <view class="topbar">
     <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
     <text class="page-title">筛选条件</text>
-    <button class="reset" bindtap="reset">重置</button>
   </view>
 
   <view class="filter-section">
-    <text class="filter-title">场景</text>
+    <view class="filter-section-head">
+      <text class="filter-title">场景</text>
+      <button class="reset" bindtap="reset">重置</button>
+    </view>
     <view class="chip-grid">
       <block wx:for="{{scene}}" wx:key="label">
         <view class="chip chip-stack {{selected.scene === index ? 'active' : ''}}" data-key="scene" data-index="{{index}}" bindtap="choose">

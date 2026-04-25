@@ -3,11 +3,15 @@
 }
 
 .filter-page .topbar {
+  position: relative;
   align-items: center;
+  justify-content: center;
   min-height: 72rpx;
 }
 
 .back {
+  position: absolute;
+  left: 0;
   color: #2d2520;
 }
 
@@ -31,14 +35,14 @@
   flex: 0 0 auto;
   width: auto;
   min-width: 0;
-  padding: 0 12rpx;
+  padding: 0 4rpx 0 18rpx;
   color: #8c7f76;
   font-size: 24rpx;
   line-height: 1;
 }
 
 .filter-page .page-title {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   font-size: 32rpx;
   font-weight: 600;
@@ -50,9 +54,15 @@
   margin-top: 36rpx;
 }
 
+.filter-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
 .filter-title {
   display: block;
-  margin-bottom: 18rpx;
   color: #2d2520;
   font-size: 28rpx;
   font-weight: 600;

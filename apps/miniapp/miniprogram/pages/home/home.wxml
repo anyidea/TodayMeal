@@ -24,7 +24,7 @@
     <view class="hero-content">
       <text class="hero-title">随机推荐</text>
       <text class="hero-subtitle">为你和胃口搭一个天作之合</text>
-      <button class="hero-button" bindtap="goFilter">开始筛选 <t-icon class="tm-icon icon-inline" name="setting" size="24rpx" color="#2D2520" /></button>
+      <button class="hero-button" bindtap="goFilter">开始筛选</button>
     </view>
     <view class="dish-bubbles">
       <block wx:for="{{miniDishes}}" wx:key="*this">
