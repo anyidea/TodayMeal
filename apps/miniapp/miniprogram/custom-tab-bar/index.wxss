@@ -1,0 +1,62 @@
+.tab-shell {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 99;
+  padding: 18rpx 30rpx calc(18rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(248, 250, 247, 0), rgba(248, 250, 247, 0.96) 34%);
+}
+
+.tab-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 112rpx;
+  padding: 10rpx;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1rpx solid rgba(23, 33, 27, 0.08);
+  border-radius: 42rpx;
+  box-shadow: 0 18rpx 54rpx rgba(15, 23, 42, 0.12);
+}
+
+.tab-item {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 92rpx;
+  border-radius: 32rpx;
+}
+
+.tab-label {
+  color: #647066;
+  font-size: 28rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  line-height: 1;
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 18rpx;
+  width: 24rpx;
+  height: 6rpx;
+  background: transparent;
+  border-radius: 999rpx;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, rgba(220, 252, 231, 0.95), rgba(254, 240, 138, 0.62));
+}
+
+.tab-item.active .tab-label {
+  color: #17211b;
+  font-size: 31rpx;
+  font-weight: 900;
+}
+
+.tab-item.active .tab-indicator {
+  background: #17211b;
+}

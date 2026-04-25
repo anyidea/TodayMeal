@@ -7,3 +7,4 @@ dist/
 .env.*
 !.env.example
 apps/api/uploads/
+apps/miniapp/project.private.config.json

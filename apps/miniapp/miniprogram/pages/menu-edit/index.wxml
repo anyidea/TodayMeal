@@ -46,7 +46,7 @@
     <view class="field-label">餐厅</view>
     <input class="input" placeholder="店名" value="{{restaurantName}}" data-field="restaurantName" bindinput="handleInput" />
     <view class="field-label">平台</view>
-    <input class="input" placeholder="美团 / 饿了么 / 小程序" value="{{platform}}" data-field="platform" bindinput="handleInput" />
+    <input class="input" placeholder="美团 / 淘宝闪购 / 小程序" value="{{platform}}" data-field="platform" bindinput="handleInput" />
     <view class="field-label">价位</view>
     <input class="input" placeholder="约 40-60 元" value="{{priceRange}}" data-field="priceRange" bindinput="handleInput" />
     <view class="field-label">点单备注</view>

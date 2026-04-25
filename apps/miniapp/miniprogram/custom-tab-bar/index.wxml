@@ -1,0 +1,15 @@
+<cover-view class="tab-shell">
+  <cover-view class="tab-panel">
+    <cover-view
+      wx:for="{{list}}"
+      wx:key="path"
+      class="tab-item {{selected === index ? 'active' : ''}}"
+      data-index="{{index}}"
+      data-path="{{item.path}}"
+      bindtap="switchTab"
+    >
+      <cover-view class="tab-indicator"></cover-view>
+      <cover-view class="tab-label">{{item.text}}</cover-view>
+    </cover-view>
+  </cover-view>
+</cover-view>

@@ -70,6 +70,7 @@ Page<MenuPageData, {
   },
 
   onShow() {
+    this.getTabBar()?.setData({ selected: 1 });
     void this.loadItems();
   },
 

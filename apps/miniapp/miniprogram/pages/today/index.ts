@@ -20,6 +20,7 @@ Page<TodayPageData, {
   },
 
   onShow() {
+    this.getTabBar()?.setData({ selected: 0 });
     void this.loadToday();
   },
 

@@ -40,6 +40,7 @@ Page<ProfilePageData, {
   },
 
   onShow() {
+    this.getTabBar()?.setData({ selected: 2 });
     void this.refresh();
   },
 
