@@ -15,17 +15,48 @@
     </view>
   </view>
 
-  <view class="form-card card">
-    <block wx:for="{{fields}}" wx:key="label">
-      <view class="form-row">
-        <text class="label">{{item.label}}</text>
-        <input placeholder="{{item.placeholder}}" placeholder-class="placeholder" />
+  <view class="link-card card">
+    <view class="link-head">
+      <view>
+        <text class="link-title">外卖链接</text>
+        <text class="link-desc">支持美团、淘宝闪购链接，解析后自动填入信息。</text>
       </view>
-    </block>
+      <button class="parse-button" loading="{{isParsing}}" bindtap="parseLink">解析</button>
+    </view>
+    <input
+      class="link-input"
+      value="{{form.externalUrl}}"
+      placeholder="粘贴外卖分享链接"
+      placeholder-class="placeholder"
+      bindinput="onInput"
+      data-field="externalUrl"
+    />
+    <view wx:if="{{parseStatus}}" class="parse-status {{parseStatus}}">
+      <text>{{parseMessage}}</text>
+    </view>
+  </view>
+
+  <view class="form-card card">
+    <view class="form-row">
+      <text class="label">店铺名称</text>
+      <input value="{{form.restaurantName}}" data-field="restaurantName" bindinput="onInput" placeholder="例如：太二酸菜鱼" placeholder-class="placeholder" />
+    </view>
+    <view class="form-row">
+      <text class="label">常点菜单</text>
+      <input value="{{form.title}}" data-field="title" bindinput="onInput" placeholder="例如：酸菜鱼双人餐" placeholder-class="placeholder" />
+    </view>
+    <view class="form-row">
+      <text class="label">平台</text>
+      <input value="{{form.platformLabel}}" data-field="platformLabel" bindinput="onInput" placeholder="美团 / 淘宝闪购" placeholder-class="placeholder" />
+    </view>
+    <view class="form-row">
+      <text class="label">人均价格</text>
+      <input value="{{form.priceRange}}" data-field="priceRange" bindinput="onInput" placeholder="例如：¥68" placeholder-class="placeholder" />
+    </view>
 
     <view class="note-block">
       <text class="label">备注（可选）</text>
-      <textarea placeholder="比如配送快、分量足、适合加班夜宵～" placeholder-class="placeholder"></textarea>
+      <textarea value="{{form.notes}}" data-field="notes" bindinput="onInput" placeholder="比如配送快、分量足、适合加班夜宵～" placeholder-class="placeholder"></textarea>
     </view>
   </view>
 </view>

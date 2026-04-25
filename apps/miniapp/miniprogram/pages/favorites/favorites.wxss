@@ -194,3 +194,17 @@
 .meta-tag .icon-inline {
   margin-right: 8rpx;
 }
+
+.order-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88rpx;
+  height: 48rpx;
+  padding: 0 20rpx;
+  border-radius: 24rpx;
+  background: #f5eae2;
+  color: #b7895c;
+  font-size: 22rpx;
+  font-weight: 600;
+}

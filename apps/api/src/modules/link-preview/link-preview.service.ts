@@ -23,6 +23,35 @@ type LinkPreviewResult =
       reason: string;
     };
 
+type TakeoutPlatform = 'meituan' | 'taobao_flash' | 'unknown';
+
+type TakeoutLinkPreviewResult =
+  | {
+      status: 'success';
+      url: string;
+      externalUrl: string;
+      platform: TakeoutPlatform;
+      platformLabel: string;
+      title?: string;
+      restaurantName?: string;
+      priceRange?: string;
+      coverImageUrl?: string;
+      description?: string;
+      linkPreview: {
+        title?: string;
+        imageUrl?: string;
+        description?: string;
+      };
+    }
+  | {
+      status: 'failed';
+      url: string;
+      externalUrl: string;
+      platform: TakeoutPlatform;
+      platformLabel: string;
+      reason: string;
+    };
+
 const failedReason = '无法自动识别，可手动补全';
 const fetchTimeoutMs = 3000;
 const maxResponseBytes = 256 * 1024;
@@ -53,6 +82,41 @@ export class LinkPreviewService {
       };
     } catch {
       return this.failed(url);
+    }
+  }
+
+  async previewTakeout(url: string): Promise<TakeoutLinkPreviewResult> {
+    const platform = this.detectTakeoutPlatform(url);
+
+    try {
+      const html = await this.fetchHtml(url);
+      const metadata = this.parseMetadata(html);
+      const titleParts = this.parseTakeoutTitle(metadata.title, platform);
+      const priceRange = this.extractPrice(metadata.title ?? metadata.description);
+
+      if (
+        !metadata.title &&
+        !metadata.imageUrl &&
+        !metadata.description
+      ) {
+        return this.failedTakeout(url, platform);
+      }
+
+      return {
+        status: 'success',
+        url,
+        externalUrl: url,
+        platform,
+        platformLabel: this.platformLabel(platform),
+        title: titleParts.title,
+        restaurantName: titleParts.restaurantName,
+        priceRange,
+        coverImageUrl: metadata.imageUrl,
+        description: metadata.description,
+        linkPreview: metadata,
+      };
+    } catch {
+      return this.failedTakeout(url, platform);
     }
   }
 
@@ -351,6 +415,111 @@ export class LinkPreviewService {
     return {
       status: 'failed',
       url,
+      reason: failedReason,
+    };
+  }
+
+  private detectTakeoutPlatform(url: string): TakeoutPlatform {
+    try {
+      const hostname = new URL(url).hostname.toLowerCase();
+
+      if (
+        hostname === 'meituan.com' ||
+        hostname.endsWith('.meituan.com') ||
+        hostname === 'dianping.com' ||
+        hostname.endsWith('.dianping.com')
+      ) {
+        return 'meituan';
+      }
+
+      if (
+        hostname === 'taobao.com' ||
+        hostname.endsWith('.taobao.com') ||
+        hostname === 'tmall.com' ||
+        hostname.endsWith('.tmall.com') ||
+        hostname === 'ele.me' ||
+        hostname.endsWith('.ele.me') ||
+        hostname === 'koubei.com' ||
+        hostname.endsWith('.koubei.com')
+      ) {
+        return 'taobao_flash';
+      }
+    } catch {
+      return 'unknown';
+    }
+
+    return 'unknown';
+  }
+
+  private platformLabel(platform: TakeoutPlatform): string {
+    if (platform === 'meituan') {
+      return '美团';
+    }
+
+    if (platform === 'taobao_flash') {
+      return '淘宝闪购';
+    }
+
+    return '未知平台';
+  }
+
+  private parseTakeoutTitle(
+    rawTitle: string | undefined,
+    platform: TakeoutPlatform,
+  ): { title?: string; restaurantName?: string } {
+    const title = this.cleanTitle(rawTitle);
+    if (!title) {
+      return {};
+    }
+
+    const withoutPrice = title.replace(this.pricePattern(), '').trim();
+    const split = withoutPrice.split(/\s+-\s+|｜|\|/).map((part) => part.trim()).filter(Boolean);
+
+    if (split.length >= 2) {
+      if (platform === 'taobao_flash') {
+        return {
+          title: split[0],
+          restaurantName: split.slice(1).join(' - '),
+        };
+      }
+
+      return {
+        restaurantName: split[0],
+        title: split.slice(1).join(' - '),
+      };
+    }
+
+    return { title: withoutPrice };
+  }
+
+  private cleanTitle(rawTitle: string | undefined): string | undefined {
+    const title = rawTitle
+      ?.replace(/【.*?】/g, '')
+      .replace(/美团外卖|美团|淘宝闪购|饿了么|口碑/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return title || undefined;
+  }
+
+  private extractPrice(value: string | undefined): string | undefined {
+    return value?.match(this.pricePattern())?.[0];
+  }
+
+  private pricePattern(): RegExp {
+    return /(?:¥|￥)\s?\d+(?:\.\d{1,2})?/;
+  }
+
+  private failedTakeout(
+    url: string,
+    platform: TakeoutPlatform,
+  ): TakeoutLinkPreviewResult {
+    return {
+      status: 'failed',
+      url,
+      externalUrl: url,
+      platform,
+      platformLabel: this.platformLabel(platform),
       reason: failedReason,
     };
   }

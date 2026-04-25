@@ -7,6 +7,11 @@ import { LinkPreviewService } from './link-preview.service';
 export class LinkPreviewController {
   constructor(private readonly linkPreviewService: LinkPreviewService) {}
 
+  @Post('takeout')
+  async takeoutPreview(@Body() dto: LinkPreviewDto) {
+    return ok(await this.linkPreviewService.previewTakeout(dto.url));
+  }
+
   @Post()
   async preview(@Body() dto: LinkPreviewDto) {
     return ok(await this.linkPreviewService.preview(dto.url));

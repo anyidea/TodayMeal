@@ -244,6 +244,82 @@ describe('Files and link preview', () => {
       });
   });
 
+  it('parses a Meituan takeout link into normalized takeout fields', async () => {
+    (undiciFetch as jest.MockedFunction<typeof undiciFetch>).mockResolvedValue(
+      new Response(
+        `
+          <html>
+            <head>
+              <meta property="og:title" content="太二酸菜鱼（万象城店） - 酸菜鱼双人餐 ¥88" />
+              <meta property="og:image" content="https://example.com/fish.jpg" />
+              <meta name="description" content="美团外卖，约30分钟送达" />
+              <title>备用标题</title>
+            </head>
+          </html>
+        `,
+        {
+          status: 200,
+          headers: {
+            'content-type': 'text/html; charset=utf-8',
+          },
+        },
+      ) as never,
+    );
+
+    await request(app.getHttpServer())
+      .post('/link-preview/takeout')
+      .send({ url: 'https://waimai.meituan.com/meal?id=123' })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          status: 'success',
+          platform: 'meituan',
+          platformLabel: '美团',
+          externalUrl: 'https://waimai.meituan.com/meal?id=123',
+          restaurantName: '太二酸菜鱼（万象城店）',
+          title: '酸菜鱼双人餐',
+          priceRange: '¥88',
+          coverImageUrl: 'https://example.com/fish.jpg',
+          description: '美团外卖，约30分钟送达',
+        });
+      });
+  });
+
+  it('recognizes Taobao instant commerce links and preserves data on weak metadata', async () => {
+    (undiciFetch as jest.MockedFunction<typeof undiciFetch>).mockResolvedValue(
+      new Response(
+        `
+          <html>
+            <head>
+              <title>鲜奶茶 - 茶百道</title>
+            </head>
+          </html>
+        `,
+        {
+          status: 200,
+          headers: {
+            'content-type': 'text/html; charset=utf-8',
+          },
+        },
+      ) as never,
+    );
+
+    await request(app.getHttpServer())
+      .post('/link-preview/takeout')
+      .send({ url: 'https://taobao.com/shanguo/item?id=456' })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          status: 'success',
+          platform: 'taobao_flash',
+          platformLabel: '淘宝闪购',
+          externalUrl: 'https://taobao.com/shanguo/item?id=456',
+          restaurantName: '茶百道',
+          title: '鲜奶茶',
+        });
+      });
+  });
+
   it('degrades link preview for loopback URLs', async () => {
     await request(app.getHttpServer())
       .post('/link-preview')

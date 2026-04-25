@@ -38,7 +38,8 @@
           <text class="store-desc">{{item.desc}}</text>
           <view class="store-bottom">
             <text class="price">{{item.price}}</text>
-            <view class="meta-tag">
+            <button wx:if="{{item.externalUrl}}" class="order-link" data-url="{{item.externalUrl}}" catchtap="openExternalUrl">打开</button>
+            <view wx:else class="meta-tag">
               <t-icon class="tm-icon icon-inline" name="heart" size="24rpx" color="#FF6B6B" />
               <text>{{item.likes}}</text>
             </view>
