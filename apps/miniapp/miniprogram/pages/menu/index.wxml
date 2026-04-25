@@ -1,3 +1,27 @@
-<view class="page">
-  <view class="card placeholder">菜单页面占位</view>
+<view class="page menu-page">
+  <view class="top-card card">
+    <view class="eyebrow">MENU JOURNAL</view>
+    <view class="headline">把想吃的，都好好收在这里。</view>
+    <view class="search-row">
+      <input class="search" placeholder="搜菜名、餐厅、备注" value="{{q}}" bindinput="handleSearch" confirm-type="search" />
+      <button class="add-btn" bindtap="goAdd">添加</button>
+    </view>
+    <tag-filter title="类型" field="type" active="{{activeType}}" options="{{typeOptions}}" bind:change="handleFilterChange" />
+    <tag-filter title="时段" field="mealPeriod" active="{{activeMealPeriod}}" options="{{mealPeriodOptions}}" bind:change="handleFilterChange" />
+  </view>
+
+  <view class="list-head">
+    <text>菜单卡片</text>
+    <text class="count">{{items.length}} 道</text>
+  </view>
+
+  <view wx:if="{{items.length}}" class="grid">
+    <menu-card wx:for="{{items}}" wx:key="id" item="{{item}}" />
+  </view>
+
+  <view wx:else class="empty card">
+    <view class="empty-title">还没有这个分类的菜单，去添加一个吧。</view>
+    <view class="empty-text">可以从一道家常菜、一个外卖链接，或一条灵感笔记开始。</view>
+    <button class="empty-action" bindtap="goAdd">添加菜单</button>
+  </view>
 </view>

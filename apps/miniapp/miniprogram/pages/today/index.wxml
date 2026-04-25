@@ -1,3 +1,36 @@
-<view class="page">
-  <view class="card placeholder">今天页面占位</view>
+<view class="page today-page">
+  <view class="hero">
+    <view>
+      <view class="eyebrow">TODAY'S NOTE</view>
+      <view class="headline">今天想把哪一口幸福端上桌？</view>
+      <view class="caption">给你挑一份刚刚好的灵感，也留一点小惊喜。</view>
+    </view>
+    <button class="primary-action {{drawing ? 'drawing' : ''}}" bindtap="drawRandom" loading="{{drawing}}">
+      {{drawing ? '正在翻菜单' : '抽一下'}}
+    </button>
+  </view>
+
+  <view wx:if="{{recommendation}}" class="recommend card">
+    <view class="section-label">今日推荐</view>
+    <menu-card item="{{recommendation.item}}" />
+    <view class="reason">因为：{{recommendation.reason}}</view>
+  </view>
+
+  <view wx:else class="empty card">
+    <view class="empty-title">今天还没有推荐</view>
+    <view class="empty-text">先收进几道她爱吃的，Today Meal 就能开始认真挑选。</view>
+    <button class="ghost-action" bindtap="goEdit">添加一道</button>
+  </view>
+
+  <view class="journal-head">
+    <view>
+      <view class="section-label">菜单手札</view>
+      <view class="section-title">最近可以考虑的 10 个选择</view>
+    </view>
+    <text class="link" bindtap="goMenu">看全部</text>
+  </view>
+
+  <view class="grid">
+    <menu-card wx:for="{{menuItems}}" wx:key="id" item="{{item}}" />
+  </view>
 </view>

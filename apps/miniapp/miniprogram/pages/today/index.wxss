@@ -1,4 +1,128 @@
-.placeholder {
-  padding: 48rpx;
+.today-page {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(254, 240, 138, 0.42), transparent 34%),
+    radial-gradient(circle at 88% 10%, rgba(220, 252, 231, 0.7), transparent 30%),
+    var(--color-bg);
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 28rpx;
+  padding: 18rpx 0 36rpx;
+}
+
+.eyebrow,
+.section-label {
+  color: #7f8f66;
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 4rpx;
+}
+
+.headline {
+  max-width: 470rpx;
+  margin-top: 16rpx;
+  color: var(--color-text);
+  font-size: 56rpx;
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.caption {
+  margin-top: 18rpx;
   color: var(--color-muted);
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.primary-action {
+  align-self: flex-end;
+  min-width: 176rpx;
+  margin: 0;
+  padding: 20rpx 28rpx;
+  color: #17211b;
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #bef264, #fef08a);
+  border-radius: 999rpx;
+  box-shadow: 0 16rpx 34rpx rgba(190, 242, 100, 0.28);
+}
+
+.primary-action::after,
+.ghost-action::after {
+  border: 0;
+}
+
+.primary-action.drawing {
+  transform: scale(0.98);
+  opacity: 0.82;
+}
+
+.recommend,
+.empty {
+  padding: 24rpx;
+}
+
+.reason {
+  margin-top: 24rpx;
+  padding: 22rpx 24rpx;
+  color: #526456;
+  font-size: 25rpx;
+  line-height: 1.5;
+  background: rgba(220, 252, 231, 0.65);
+  border-radius: 28rpx;
+}
+
+.empty {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.empty-title {
+  font-size: 34rpx;
+  font-weight: 800;
+}
+
+.empty-text {
+  margin-top: 16rpx;
+  color: var(--color-muted);
+  font-size: 26rpx;
+  line-height: 1.55;
+}
+
+.ghost-action {
+  display: inline-flex;
+  margin: 28rpx 0 0;
+  padding: 14rpx 24rpx;
+  color: #48604d;
+  font-size: 25rpx;
+  background: rgba(220, 252, 231, 0.8);
+  border-radius: 999rpx;
+}
+
+.journal-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 44rpx 0 22rpx;
+}
+
+.section-title {
+  margin-top: 10rpx;
+  font-size: 34rpx;
+  font-weight: 800;
+}
+
+.link {
+  color: #66802f;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  padding-bottom: 28rpx;
 }

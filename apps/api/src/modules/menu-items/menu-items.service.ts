@@ -89,6 +89,7 @@ export class MenuItemsService {
       where,
       include: menuItemInclude,
       orderBy: { updatedAt: 'desc' },
+      take: query.limit,
     });
 
     return menuItems.map((menuItem) => this.toResponse(menuItem));

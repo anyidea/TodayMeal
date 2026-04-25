@@ -1,0 +1,11 @@
+<view class="menu-card" bindtap="handleTap">
+  <image wx:if="{{item.coverImageUrl}}" class="cover" src="{{item.coverImageUrl}}" mode="aspectFill" />
+  <view wx:else class="cover empty-cover">Today Meal</view>
+  <view class="body">
+    <view class="title">{{item.title}}</view>
+    <view class="subtitle">{{item.subtitle}}</view>
+    <view class="tags">
+      <text wx:for="{{item.tags}}" wx:key="name" class="tag">{{item.name}}</text>
+    </view>
+  </view>
+</view>

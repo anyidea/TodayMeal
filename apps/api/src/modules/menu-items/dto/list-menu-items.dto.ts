@@ -1,6 +1,14 @@
 import { Transform } from 'class-transformer';
 import { MealPeriod, MenuItemType } from '@prisma/client';
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 function toBoolean(value: unknown): boolean | unknown {
   if (value === 'true') {
@@ -15,6 +23,13 @@ function toBoolean(value: unknown): boolean | unknown {
 }
 
 export class ListMenuItemsDto {
+  @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  limit?: number;
+
   @IsOptional()
   @IsEnum(MenuItemType)
   type?: MenuItemType;

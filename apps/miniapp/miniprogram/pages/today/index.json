@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "今天"
+  "navigationBarTitleText": "今天",
+  "usingComponents": {
+    "menu-card": "/components/menu-card/index"
+  }
 }

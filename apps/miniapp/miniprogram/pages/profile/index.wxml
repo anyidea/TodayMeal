@@ -1,3 +1,51 @@
-<view class="page">
-  <view class="card placeholder">我的页面占位</view>
+<view class="page profile-page">
+  <view class="card hero-card">
+    <view class="eyebrow">PRIVATE TABLE</view>
+    <view class="headline">这本菜单，只为你们慢慢变厚。</view>
+    <view class="login-row">
+      <view>
+        <view class="status">{{loggedIn ? '已登录' : '还没登录'}}</view>
+        <view class="role">身份：{{roleLabel}}</view>
+      </view>
+      <button wx:if="{{!loggedIn}}" class="login-button" bindtap="login">微信登录</button>
+    </view>
+  </view>
+
+  <view class="stats-row">
+    <view class="stat-card card">
+      <view class="stat-number">{{recentCount}}</view>
+      <view class="stat-label">最近吃过</view>
+    </view>
+    <view class="stat-card card">
+      <view class="stat-number">{{favoriteCount}}</view>
+      <view class="stat-label">心动收藏</view>
+    </view>
+  </view>
+
+  <view class="card invite-card">
+    <view class="section-title">绑定邀请码</view>
+    <view class="section-note">拿到邀请码后绑定，就能一起维护这本小菜单。</view>
+    <view class="invite-row">
+      <input class="invite-input" placeholder="输入邀请码" value="{{inviteCode}}" bindinput="handleInviteInput" />
+      <button class="bind-button" bindtap="bindInviteCode">绑定</button>
+    </view>
+  </view>
+
+  <view class="history-head">
+    <view class="section-title">最近饭桌</view>
+    <view class="section-note">那些已经一起尝过的选择。</view>
+  </view>
+
+  <view wx:if="{{histories.length}}" class="history-list">
+    <view wx:for="{{histories}}" wx:key="id" class="history-item card">
+      <image wx:if="{{item.menuItem.coverImageUrl}}" class="history-cover" src="{{item.menuItem.coverImageUrl}}" mode="aspectFill" />
+      <view wx:else class="history-cover empty-cover">Meal</view>
+      <view class="history-body">
+        <view class="history-title">{{item.menuItem.title}}</view>
+        <view class="history-subtitle">{{item.menuItem.subtitle || '又认真吃了一餐'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty card">最近还没有饭桌记录，吃完一餐后回来点一下“今天吃过”。</view>
 </view>

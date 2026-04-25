@@ -1,4 +1,160 @@
-.placeholder {
-  padding: 48rpx;
+.profile-page {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(254, 240, 138, 0.38), transparent 34%),
+    radial-gradient(circle at 95% 14%, rgba(220, 252, 231, 0.64), transparent 32%),
+    var(--color-bg);
+}
+
+.hero-card,
+.invite-card {
+  padding: 36rpx;
+}
+
+.eyebrow {
+  color: #7f8f66;
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 4rpx;
+}
+
+.headline {
+  margin-top: 16rpx;
+  font-size: 44rpx;
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.login-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin-top: 34rpx;
+}
+
+.status {
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.role,
+.section-note,
+.history-subtitle,
+.empty {
   color: var(--color-muted);
+  font-size: 25rpx;
+  line-height: 1.55;
+}
+
+.login-button,
+.bind-button {
+  margin: 0;
+  padding: 18rpx 26rpx;
+  color: #17211b;
+  font-size: 25rpx;
+  font-weight: 800;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #bef264, #fef08a);
+  border-radius: 999rpx;
+}
+
+.login-button::after,
+.bind-button::after {
+  border: 0;
+}
+
+.stats-row {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 30rpx;
+}
+
+.stat-number {
+  color: var(--color-text);
+  font-size: 48rpx;
+  font-weight: 900;
+}
+
+.stat-label {
+  margin-top: 6rpx;
+  color: var(--color-muted);
+  font-size: 24rpx;
+}
+
+.invite-card {
+  margin-top: 24rpx;
+}
+
+.section-title {
+  color: var(--color-text);
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.invite-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 22rpx;
+}
+
+.invite-input {
+  flex: 1;
+  height: 82rpx;
+  padding: 0 24rpx;
+  color: var(--color-text);
+  font-size: 27rpx;
+  background: #f8faf7;
+  border-radius: 26rpx;
+}
+
+.history-head {
+  margin: 40rpx 4rpx 18rpx;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.history-item {
+  display: flex;
+  gap: 20rpx;
+  padding: 18rpx;
+}
+
+.history-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 132rpx;
+  height: 132rpx;
+  color: rgba(23, 33, 27, 0.45);
+  font-size: 22rpx;
+  background: rgba(220, 252, 231, 0.86);
+  border-radius: 26rpx;
+}
+
+.empty-cover {
+  letter-spacing: 3rpx;
+}
+
+.history-body {
+  flex: 1;
+  padding-top: 10rpx;
+}
+
+.history-title {
+  color: var(--color-text);
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.empty {
+  padding: 34rpx;
 }
