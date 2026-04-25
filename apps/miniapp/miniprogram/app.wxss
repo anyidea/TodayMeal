@@ -2,7 +2,7 @@ page {
   min-height: 100vh;
   background: #fff8f5;
   color: #2d2520;
-  font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  font-family: "PingFang SC", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 400;
 }
 
@@ -47,10 +47,10 @@ button::after {
 }
 
 .brand-title {
-  font-family: "Times New Roman", Georgia, serif;
-  font-size: 38rpx;
-  font-weight: 600;
-  letter-spacing: 0.2rpx;
+  font-family: "SF Pro Rounded", "DIN", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 40rpx;
+  font-weight: 700;
+  letter-spacing: 0.5rpx;
 }
 
 .page-title {
@@ -73,16 +73,16 @@ button::after {
 }
 
 .card {
-  border: 1rpx solid rgba(239, 231, 225, 0.9);
+  border: 1rpx solid rgba(239, 231, 225, 0.6);
   border-radius: 32rpx;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 8rpx 40rpx rgba(45, 37, 32, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16rpx 48rpx rgba(45, 37, 32, 0.04);
 }
 
 .soft-card {
   border-radius: 32rpx;
   background: #ffffff;
-  box-shadow: 0 4rpx 24rpx rgba(45, 37, 32, 0.06);
+  box-shadow: 0 8rpx 32rpx rgba(45, 37, 32, 0.03);
 }
 
 .primary-button {
@@ -130,19 +130,20 @@ button::after {
 
 .nav-bar {
   position: fixed;
-  right: 24rpx;
-  bottom: 24rpx;
-  left: 24rpx;
+  right: 32rpx;
+  bottom: 48rpx;
+  left: 32rpx;
   z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 108rpx;
+  height: 112rpx;
   padding: 0 8rpx;
   border: 1rpx solid rgba(239, 231, 225, 0.92);
-  border-radius: 32rpx;
+  border-radius: 40rpx;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 12rpx 44rpx rgba(45, 37, 32, 0.1);
+  box-shadow: 0 16rpx 64rpx rgba(45, 37, 32, 0.06);
+  backdrop-filter: blur(24rpx);
 }
 
 .nav-item {
@@ -150,7 +151,7 @@ button::after {
   flex: 1;
   align-items: center;
   flex-direction: column;
-  gap: 7rpx;
+  gap: 8rpx;
   color: #8c7f76;
   font-size: 20rpx;
   font-weight: 400;
@@ -175,7 +176,7 @@ button::after {
 
 .nav-random {
   position: relative;
-  top: -28rpx;
+  top: -24rpx;
   display: flex;
   flex: 0 0 112rpx;
   align-items: center;
@@ -187,7 +188,8 @@ button::after {
   border-radius: 50%;
   background: #b7895c;
   color: #fff;
-  box-shadow: 0 12rpx 30rpx rgba(183, 137, 92, 0.34);
+  box-shadow: 0 16rpx 40rpx rgba(183, 137, 92, 0.24);
+  transition: all 0.3s ease;
 }
 
 .nav-random text:last-child {

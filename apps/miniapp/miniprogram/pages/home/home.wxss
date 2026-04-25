@@ -1,44 +1,13 @@
 .home-page {
-  padding-top: 92rpx;
-}
-
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 14rpx;
-  height: 58rpx;
-  padding: 0 18rpx;
-  border-radius: 999rpx;
-  background: rgba(45, 37, 32, 0.36);
-  color: #ffffff;
-  backdrop-filter: blur(12rpx);
-}
-
-.top-actions .tm-icon {
-  color: #ffffff;
-}
-
-.capsule-divider {
-  width: 1rpx;
-  height: 28rpx;
-  background: rgba(255, 255, 255, 0.42);
-}
-
-.circle-dot {
-  display: none;
-}
-
-.top-actions text {
-  color: #8c7f76;
-  font-size: 28rpx;
+  padding-top: 96rpx;
 }
 
 .greeting {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 22rpx;
-  padding: 28rpx 30rpx;
+  margin-top: 40rpx;
+  padding: 0 8rpx;
 }
 
 .hello,
@@ -47,14 +16,17 @@
 }
 
 .hello {
-  font-size: 28rpx;
+  color: #2d2520;
+  font-size: 40rpx;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .hint {
-  margin-top: 10rpx;
+  margin-top: 12rpx;
   color: #8c7f76;
-  font-size: 22rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
 }
 
 .mascot {
@@ -62,16 +34,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 104rpx;
-  height: 72rpx;
-  color: #b7895c;
-}
-
-.mascot .tm-icon-heart {
-  position: absolute;
-  top: -14rpx;
-  right: 8rpx;
-  color: #ff6b6b;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 16rpx 48rpx rgba(183, 137, 92, 0.12);
 }
 
 .mascot .tm-icon-soup {
@@ -81,9 +48,10 @@
 .hero {
   position: relative;
   overflow: hidden;
-  min-height: 354rpx;
-  margin-top: 24rpx;
-  padding: 34rpx;
+  min-height: 360rpx;
+  margin-top: 48rpx;
+  padding: 40rpx;
+  border-radius: 48rpx;
   color: #fff;
 }
 
@@ -91,11 +59,10 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(45, 37, 32, 0.92), rgba(45, 37, 32, 0.28)),
+    linear-gradient(135deg, rgba(183, 137, 92, 0.4), transparent),
     url("https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=900&q=80");
   background-size: cover;
   background-position: center;
-  filter: saturate(0.9);
 }
 
 .hero-content {
@@ -107,14 +74,16 @@
 }
 
 .hero-title {
-  font-size: 42rpx;
+  font-size: 48rpx;
   font-weight: 700;
+  text-shadow: 0 4rpx 16rpx rgba(45, 37, 32, 0.2);
 }
 
 .hero-subtitle {
-  margin-top: 12rpx;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 24rpx;
+  margin-top: 16rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 26rpx;
+  text-shadow: 0 4rpx 16rpx rgba(45, 37, 32, 0.2);
 }
 
 .hero-button {
@@ -123,14 +92,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 68rpx;
-  margin-top: 36rpx;
-  padding: 0 28rpx;
-  border-radius: 34rpx;
-  background: #ffffff;
+  height: 72rpx;
+  margin-top: 40rpx;
+  padding: 0 32rpx;
+  border-radius: 36rpx;
+  background: rgba(255, 255, 255, 0.96);
   color: #2d2520;
-  font-size: 24rpx;
+  font-size: 26rpx;
   font-weight: 600;
+  box-shadow: 0 8rpx 32rpx rgba(45, 37, 32, 0.08);
 }
 
 .hero-button .icon-inline,
@@ -140,25 +110,25 @@
 
 .dish-bubbles {
   position: absolute;
-  right: 28rpx;
-  bottom: 28rpx;
+  right: 32rpx;
+  bottom: 32rpx;
   z-index: 2;
   display: flex;
 }
 
 .dish-bubble {
-  width: 100rpx;
-  height: 100rpx;
-  margin-left: -18rpx;
-  border: 6rpx solid rgba(255, 255, 255, 0.86);
+  width: 104rpx;
+  height: 104rpx;
+  margin-left: -20rpx;
+  border: 6rpx solid rgba(255, 255, 255, 0.9);
   border-radius: 50%;
-  box-shadow: 0 8rpx 24rpx rgba(45, 37, 32, 0.18);
+  box-shadow: 0 16rpx 48rpx rgba(45, 37, 32, 0.12);
 }
 
 .quick-grid {
   display: flex;
-  gap: 16rpx;
-  margin-top: 24rpx;
+  gap: 24rpx;
+  margin-top: 32rpx;
 }
 
 .quick-card {
@@ -168,8 +138,8 @@
   flex: 1 1 0;
   width: 0;
   min-width: 0;
-  min-height: 142rpx;
-  padding: 24rpx;
+  min-height: 160rpx;
+  padding: 28rpx;
   text-align: left;
 }
 
@@ -184,26 +154,26 @@
 
 .quick-title {
   color: #2d2520;
-  font-size: 28rpx;
+  font-size: 32rpx;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .quick-subtitle {
-  margin-top: 8rpx;
+  margin-top: 12rpx;
   color: #c5beb8;
-  font-size: 22rpx;
+  font-size: 24rpx;
 }
 
 .quick-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 54rpx;
-  height: 54rpx;
-  flex: 0 0 54rpx;
-  margin-left: 12rpx;
-  border-radius: 18rpx;
+  width: 64rpx;
+  height: 64rpx;
+  flex: 0 0 64rpx;
+  margin-left: 16rpx;
+  border-radius: 20rpx;
   background: #f5eae2;
   color: #b7895c;
 }
@@ -215,42 +185,45 @@
 .add-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16rpx;
-  margin-top: 18rpx;
+  gap: 24rpx;
+  margin-top: 24rpx;
 }
 
 .add-action {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
-  height: 72rpx;
-  border: 1rpx solid #efe7e1;
+  gap: 12rpx;
+  height: 80rpx;
+  border: 1rpx solid rgba(239, 231, 225, 0.6);
   border-radius: 24rpx;
-  background: #fff;
+  background: #ffffff;
   color: #b7895c;
-  font-size: 24rpx;
+  font-size: 26rpx;
   font-weight: 600;
+  box-shadow: 0 8rpx 32rpx rgba(45, 37, 32, 0.03);
 }
 
 .add-action.primary {
-  border-color: #b7895c;
+  border: none;
   background: #b7895c;
-  color: #fff;
+  color: #ffffff;
+  box-shadow: 0 16rpx 40rpx rgba(183, 137, 92, 0.2);
 }
 
 .section-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 42rpx 0 20rpx;
+  margin: 48rpx 0 24rpx;
+  padding: 0 8rpx;
 }
 
 .section-action {
   display: flex;
   align-items: center;
   color: #b7895c;
-  font-size: 24rpx;
+  font-size: 26rpx;
 }
 
 .inspiration-scroll {
@@ -260,8 +233,8 @@
 
 .dish-row {
   display: flex;
-  gap: 16rpx;
-  padding-bottom: 10rpx;
+  gap: 24rpx;
+  padding-bottom: 24rpx;
 }
 
 .dish-row::after {
@@ -271,31 +244,32 @@
 }
 
 .dish-card {
-  flex: 0 0 188rpx;
+  flex: 0 0 200rpx;
   overflow: hidden;
-  padding-bottom: 18rpx;
+  padding-bottom: 24rpx;
 }
 
 .dish-cover {
-  width: 188rpx;
-  height: 142rpx;
-  border-radius: 30rpx 30rpx 20rpx 20rpx;
+  width: 200rpx;
+  height: 160rpx;
+  border-radius: 32rpx 32rpx 24rpx 24rpx;
 }
 
 .dish-name,
 .dish-meta {
   display: block;
-  padding: 0 18rpx;
+  padding: 0 20rpx;
 }
 
 .dish-name {
-  margin-top: 14rpx;
-  font-size: 25rpx;
+  margin-top: 16rpx;
+  color: #2d2520;
+  font-size: 28rpx;
   font-weight: 600;
 }
 
 .dish-meta {
-  margin-top: 8rpx;
+  margin-top: 10rpx;
   color: #8c7f76;
-  font-size: 20rpx;
+  font-size: 22rpx;
 }
