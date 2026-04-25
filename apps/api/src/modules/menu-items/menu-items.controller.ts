@@ -22,14 +22,16 @@ import { MenuItemsService } from './menu-items.service';
 export class MenuItemsController {
   constructor(private readonly menuItemsService: MenuItemsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async list(@Query() query: ListMenuItemsDto) {
-    return ok(await this.menuItemsService.list(query));
+  async list(@CurrentUser() user: RequestUser, @Query() query: ListMenuItemsDto) {
+    return ok(await this.menuItemsService.list(query, user.id));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getById(@Param('id') id: string) {
-    return ok(await this.menuItemsService.getById(id));
+  async getById(@CurrentUser() user: RequestUser, @Param('id') id: string) {
+    return ok(await this.menuItemsService.getById(id, user.id));
   }
 
   @UseGuards(JwtAuthGuard, EditorGuard)
@@ -50,13 +52,13 @@ export class MenuItemsController {
 
   @UseGuards(JwtAuthGuard, EditorGuard)
   @Delete(':id')
-  async archive(@Param('id') id: string) {
-    return ok(await this.menuItemsService.archive(id));
+  async archive(@CurrentUser() user: RequestUser, @Param('id') id: string) {
+    return ok(await this.menuItemsService.archive(id, user.id));
   }
 
   @UseGuards(JwtAuthGuard, EditorGuard)
   @Post(':id/favorite')
-  async toggleFavorite(@Param('id') id: string) {
-    return ok(await this.menuItemsService.toggleFavorite(id));
+  async toggleFavorite(@CurrentUser() user: RequestUser, @Param('id') id: string) {
+    return ok(await this.menuItemsService.toggleFavorite(id, user.id));
   }
 }

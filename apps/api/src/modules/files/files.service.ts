@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import 'multer';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ConfirmUploadDto, CreateUploadPolicyDto } from './dto/create-upload-policy.dto';
 
 const allowedImageMimeTypes = new Set([
   'image/jpeg',
@@ -69,6 +70,74 @@ export class FilesService {
     };
   }
 
+  createUploadPolicy(dto: CreateUploadPolicyDto) {
+    if (!allowedImageMimeTypes.has(dto.mimeType)) {
+      throw new BadRequestException('unsupported image type');
+    }
+
+    const bucket = this.requiredConfig('OSS_BUCKET');
+    const endpoint = this.requiredConfig('OSS_ENDPOINT');
+    const accessKeyId = this.requiredConfig('OSS_ACCESS_KEY_ID');
+    const accessKeySecret = this.requiredConfig('OSS_ACCESS_KEY_SECRET');
+    const publicBaseUrl =
+      this.configService.get<string>('OSS_PUBLIC_BASE_URL') ?? endpoint;
+    const storageKey = this.buildStorageKey(dto.fileName, dto.mimeType);
+    const expiration = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    const policy = Buffer.from(
+      JSON.stringify({
+        expiration,
+        conditions: [
+          ['eq', '$bucket', bucket],
+          ['eq', '$key', storageKey],
+          ['content-length-range', 1, dto.size],
+        ],
+      }),
+    ).toString('base64');
+    const signature = createHmac('sha1', accessKeySecret)
+      .update(policy)
+      .digest('base64');
+
+    return {
+      uploadUrl: endpoint.replace(/\/$/, ''),
+      fileUrl: `${publicBaseUrl.replace(/\/$/, '')}/${storageKey}`,
+      storageKey,
+      formData: {
+        key: storageKey,
+        policy,
+        OSSAccessKeyId: accessKeyId,
+        Signature: signature,
+        success_action_status: '200',
+      },
+    };
+  }
+
+  async confirmUpload(dto: ConfirmUploadDto, userId: string) {
+    if (!allowedImageMimeTypes.has(dto.mimeType)) {
+      throw new BadRequestException('unsupported image type');
+    }
+
+    if (!dto.storageKey.startsWith('uploads/')) {
+      throw new BadRequestException('invalid storage key');
+    }
+
+    const fileAsset = await this.prisma.fileAsset.create({
+      data: {
+        url: dto.url,
+        storageKey: dto.storageKey,
+        mimeType: dto.mimeType,
+        size: dto.size,
+        uploadedById: userId,
+      },
+    });
+
+    return {
+      id: fileAsset.id,
+      url: fileAsset.url,
+      mimeType: fileAsset.mimeType,
+      size: fileAsset.size,
+    };
+  }
+
   private getExtension(file: Express.Multer.File): string {
     const extension =
       imageMimeExtensions[file.mimetype as keyof typeof imageMimeExtensions];
@@ -77,6 +146,30 @@ export class FilesService {
     }
 
     return extension;
+  }
+
+  private buildStorageKey(fileName: string, mimeType: string): string {
+    const now = new Date();
+    const year = String(now.getFullYear());
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const extension =
+      imageMimeExtensions[mimeType as keyof typeof imageMimeExtensions] ??
+      path.extname(fileName);
+
+    if (!extension || !Object.values(imageMimeExtensions).includes(extension as never)) {
+      throw new BadRequestException('unsupported image type');
+    }
+
+    return path.posix.join('uploads', year, month, `${randomUUID()}${extension}`);
+  }
+
+  private requiredConfig(key: string): string {
+    const value = this.configService.get<string>(key);
+    if (!value) {
+      throw new BadRequestException(`${key} is required`);
+    }
+
+    return value;
   }
 
   private assertMagicBytes(file: Express.Multer.File): void {

@@ -1,6 +1,7 @@
-const storageKey = "todayMeal.takeoutFavorites";
+import { request } from "../../utils/api";
 
 type StoreItem = {
+  id?: string;
   name: string;
   desc: string;
   price: string;
@@ -13,62 +14,70 @@ type StoreItem = {
   notes?: string;
 };
 
-const defaultStores: StoreItem[] = [
-  {
-    name: "喜茶（万象城店）",
-    desc: "多肉葡萄",
-    price: "¥28",
-    likes: 66,
-    tag: "茶",
-    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=260&q=80"
-  },
-  {
-    name: "太二酸菜鱼（万象城店）",
-    desc: "酸菜鱼",
-    price: "¥88",
-    likes: 42,
-    tag: "鱼",
-    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=260&q=80"
-  },
-  {
-    name: "海底捞外送",
-    desc: "番茄锅底",
-    price: "¥68",
-    likes: 38,
-    tag: "锅",
-    image: "https://images.unsplash.com/photo-1615361200141-f45961202b5c?auto=format&fit=crop&w=260&q=80"
-  },
-  {
-    name: "肯德基宅急送",
-    desc: "吮指原味鸡",
-    price: "¥39.9",
-    likes: 24,
-    tag: "炸",
-    image: "https://images.unsplash.com/photo-1562967916-eb82221dfb92?auto=format&fit=crop&w=260&q=80"
-  },
-  {
-    name: "茶百道",
-    desc: "鲜奶茶",
-    price: "¥26",
-    likes: 18,
-    tag: "饮",
-    image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&w=260&q=80"
-  }
-];
+type MenuItem = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  restaurantName?: string;
+  platform?: string;
+  externalUrl?: string;
+  priceRange?: string;
+  coverImageUrl?: string;
+  notes?: string;
+  tags: { name: string }[];
+};
+
+const defaultImage =
+  "https://images.unsplash.com/photo-1615361200141-f45961202b5c?auto=format&fit=crop&w=260&q=80";
 
 Page({
   data: {
     tabs: ["全部", "外卖", "店铺", "饮品"],
     activeTab: 0,
-    stores: defaultStores
+    stores: [],
+    isLoading: false
   },
 
   onShow() {
-    this.setData({ stores: [...this.readStoredTakeouts(), ...defaultStores] });
+    this.loadStores();
   },
 
   chooseTab(event: any) {
-    this.setData({ activeTab: event.currentTarget.dataset.index });
+    this.setData({ activeTab: event.currentTarget.dataset.index }, () => {
+      this.loadStores();
+    });
+  },
+
+  async loadStores() {
+    const tab = this.data.tabs[this.data.activeTab];
+    const query = tab === "全部" ? "" : `&tag=${encodeURIComponent(tab)}`;
+
+    this.setData({ isLoading: true });
+    try {
+      const items = await request<MenuItem[]>({
+        url: `/menu-items?type=takeout${query}`
+      });
+
+      this.setData({
+        stores: items.map((item) => ({
+          id: item.id,
+          name: item.restaurantName || item.subtitle || item.title,
+          desc: item.title,
+          price: item.priceRange || "价格待补",
+          likes: 0,
+          tag: this.tagFromItem(item),
+          image: item.coverImageUrl || defaultImage,
+          platform: item.platform,
+          platformLabel: item.tags[0]?.name,
+          externalUrl: item.externalUrl,
+          notes: item.notes
+        }))
+      });
+    } catch {
+      wx.showToast({ title: "外卖收藏加载失败", icon: "none" });
+    } finally {
+      this.setData({ isLoading: false });
+    }
   },
 
   openExternalUrl(event: any) {
@@ -105,11 +114,15 @@ Page({
     wx.navigateTo({ url: "/pages/profile/profile" });
   },
 
-  readStoredTakeouts(): StoreItem[] {
-    try {
-      return wx.getStorageSync(storageKey) || [];
-    } catch {
-      return [];
+  tagFromItem(item: MenuItem): string {
+    const label = item.tags[0]?.name || item.platform || "外";
+    if (label.includes("美团")) {
+      return "美";
     }
+    if (label.includes("淘宝")) {
+      return "淘";
+    }
+
+    return label.slice(0, 1);
   }
 });

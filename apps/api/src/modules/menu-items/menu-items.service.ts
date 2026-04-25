@@ -44,9 +44,10 @@ export class MenuItemsService {
     return this.toResponse(menuItem);
   }
 
-  async list(query: ListMenuItemsDto) {
+  async list(query: ListMenuItemsDto, userId: string) {
     const where: Prisma.MenuItemWhereInput = {
       status: 'active',
+      createdById: userId,
     };
 
     if (query.type) {
@@ -95,11 +96,12 @@ export class MenuItemsService {
     return menuItems.map((menuItem) => this.toResponse(menuItem));
   }
 
-  async getById(id: string) {
+  async getById(id: string, userId: string) {
     const menuItem = await this.prisma.menuItem.findFirst({
       where: {
         id,
         status: 'active',
+        createdById: userId,
       },
       include: menuItemInclude,
     });
@@ -112,7 +114,7 @@ export class MenuItemsService {
   }
 
   async update(id: string, dto: UpdateMenuItemDto, userId: string) {
-    await this.ensureActive(id);
+    await this.ensureActive(id, userId);
 
     const { tagNames, ...data } = dto;
     const menuItem = await this.prisma.menuItem.update({
@@ -134,8 +136,8 @@ export class MenuItemsService {
     return this.toResponse(menuItem);
   }
 
-  async archive(id: string) {
-    await this.ensureActive(id);
+  async archive(id: string, userId: string) {
+    await this.ensureActive(id, userId);
 
     const menuItem = await this.prisma.menuItem.update({
       where: { id },
@@ -148,8 +150,8 @@ export class MenuItemsService {
     return this.toResponse(menuItem);
   }
 
-  async toggleFavorite(id: string) {
-    const current = await this.ensureActive(id);
+  async toggleFavorite(id: string, userId: string) {
+    const current = await this.ensureActive(id, userId);
     const menuItem = await this.prisma.menuItem.update({
       where: { id },
       data: {
@@ -181,11 +183,12 @@ export class MenuItemsService {
     };
   }
 
-  private async ensureActive(id: string) {
+  private async ensureActive(id: string, userId: string) {
     const menuItem = await this.prisma.menuItem.findFirst({
       where: {
         id,
         status: 'active',
+        createdById: userId,
       },
     });
 

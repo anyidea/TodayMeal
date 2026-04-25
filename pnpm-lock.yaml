@@ -115,6 +115,12 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  apps/miniapp:
+    dependencies:
+      tdesign-miniprogram:
+        specifier: ^1.14.0
+        version: 1.14.0
+
   packages/shared:
     devDependencies:
       typescript:
@@ -2953,6 +2959,9 @@ packages:
   tapable@2.3.3:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
     engines: {node: '>=6'}
+
+  tdesign-miniprogram@1.14.0:
+    resolution: {integrity: sha512-uWzUKebTGjRyQem1rFhD6V/OQ+IpD0S3clFUqeN5IrFxFM59XfNZ/ifTZoVHFhDOG769iI5Gvwfu+BX7kW9vrQ==}
 
   terser-webpack-plugin@5.5.0:
     resolution: {integrity: sha512-UYhptBwhWvfIjKd/UuFo6D8uq9xpGLDK+z8EDsj/zWhrTaH34cKEbrkMKfV5YWqGBvAYA3tlzZbs2R+qYrbQJA==}
@@ -6437,6 +6446,8 @@ snapshots:
       '@pkgr/core': 0.2.9
 
   tapable@2.3.3: {}
+
+  tdesign-miniprogram@1.14.0: {}
 
   terser-webpack-plugin@5.5.0(webpack@5.106.0):
     dependencies:

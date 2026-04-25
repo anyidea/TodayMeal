@@ -66,6 +66,11 @@ describe('Files and link preview', () => {
     process.env.NODE_ENV = 'test';
     process.env.UPLOAD_DIR = uploadDir;
     process.env.PUBLIC_BASE_URL = 'https://static.example.test';
+    process.env.OSS_BUCKET = 'today-meal-test';
+    process.env.OSS_ENDPOINT = 'https://today-meal-test.oss-cn-hangzhou.aliyuncs.com';
+    process.env.OSS_PUBLIC_BASE_URL = 'https://cdn.example.test';
+    process.env.OSS_ACCESS_KEY_ID = 'test-access-key';
+    process.env.OSS_ACCESS_KEY_SECRET = 'test-secret-key';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -190,6 +195,63 @@ describe('Files and link preview', () => {
         expect(body.data.url).not.toMatch(/\.html$/);
         expect(body.data.mimeType).toBe('image/gif');
       });
+  });
+
+  it('creates an OSS direct upload policy for editors', async () => {
+    const token = await createEditorToken(app, prisma);
+
+    await request(app.getHttpServer())
+      .post('/files/upload-policy')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        fileName: 'dish.jpg',
+        mimeType: 'image/jpeg',
+        size: 1024,
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.uploadUrl).toBe(
+          'https://today-meal-test.oss-cn-hangzhou.aliyuncs.com',
+        );
+        expect(body.data.fileUrl).toMatch(
+          /^https:\/\/cdn\.example\.test\/uploads\/\d{4}\/\d{2}\/.+\.jpg$/,
+        );
+        expect(body.data.storageKey).toMatch(
+          /^uploads\/\d{4}\/\d{2}\/.+\.jpg$/,
+        );
+        expect(body.data.formData).toMatchObject({
+          key: body.data.storageKey,
+          OSSAccessKeyId: 'test-access-key',
+          success_action_status: '200',
+        });
+        expect(body.data.formData.policy).toEqual(expect.any(String));
+        expect(body.data.formData.Signature).toEqual(expect.any(String));
+      });
+  });
+
+  it('confirms an OSS direct upload and stores file metadata', async () => {
+    const token = await createEditorToken(app, prisma);
+
+    await request(app.getHttpServer())
+      .post('/files/confirm')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        storageKey: 'uploads/2026/04/dish.jpg',
+        url: 'https://cdn.example.test/uploads/2026/04/dish.jpg',
+        mimeType: 'image/jpeg',
+        size: 1024,
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          id: expect.any(String),
+          url: 'https://cdn.example.test/uploads/2026/04/dish.jpg',
+          mimeType: 'image/jpeg',
+          size: 1024,
+        });
+      });
+
+    await expect(prisma.fileAsset.count()).resolves.toBe(1);
   });
 
   it('degrades link preview gracefully when metadata cannot be fetched', async () => {

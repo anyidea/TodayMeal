@@ -1,7 +1,4 @@
-const apiBaseUrl = "http://localhost:3000";
-const storageKey = "todayMeal.takeoutFavorites";
-const defaultImage =
-  "https://images.unsplash.com/photo-1615361200141-f45961202b5c?auto=format&fit=crop&w=260&q=80";
+import { request } from "../../utils/api";
 
 type TakeoutForm = {
   externalUrl: string;
@@ -25,19 +22,6 @@ type TakeoutPreviewResponse = {
   coverImageUrl?: string;
   description?: string;
   reason?: string;
-};
-
-type StoredTakeout = {
-  name: string;
-  desc: string;
-  price: string;
-  likes: number;
-  tag: string;
-  image: string;
-  platform?: string;
-  platformLabel?: string;
-  externalUrl?: string;
-  notes?: string;
 };
 
 Page({
@@ -68,7 +52,7 @@ Page({
     });
   },
 
-  parseLink() {
+  async parseLink() {
     const url = this.data.form.externalUrl.trim();
     if (!url) {
       wx.showToast({ title: "先粘贴外卖链接", icon: "none" });
@@ -81,79 +65,76 @@ Page({
       parseMessage: ""
     });
 
-    wx.request({
-      url: `${apiBaseUrl}/link-preview/takeout`,
-      method: "POST",
-      data: { url },
-      success: (res) => {
-        const data = (res.data as { data?: TakeoutPreviewResponse }).data;
+    try {
+      const data = await request<TakeoutPreviewResponse>({
+        url: "/link-preview/takeout",
+        method: "POST",
+        data: { url }
+      });
 
-        if (!data || data.status !== "success") {
-          this.setData({
-            parseStatus: "failed",
-            parseMessage: data?.reason || "无法自动识别，可手动补全"
-          });
-          return;
-        }
-
-        this.setData({
-          form: {
-            ...this.data.form,
-            externalUrl: data.externalUrl || url,
-            restaurantName: data.restaurantName || this.data.form.restaurantName,
-            title: data.title || this.data.form.title,
-            platform: data.platform || this.data.form.platform,
-            platformLabel: data.platformLabel || this.data.form.platformLabel,
-            priceRange: data.priceRange || this.data.form.priceRange,
-            coverImageUrl: data.coverImageUrl || this.data.form.coverImageUrl
-          },
-          parseStatus: "success",
-          parseMessage: "已自动填入可识别的信息，保存前可以继续微调。"
-        });
-      },
-      fail: () => {
+      if (data.status !== "success") {
         this.setData({
           parseStatus: "failed",
-          parseMessage: "解析服务暂时不可用，可先手动填写并保存链接。"
+          parseMessage: data.reason || "无法自动识别，可手动补全"
         });
-      },
-      complete: () => {
-        this.setData({ isParsing: false });
+        return;
       }
-    });
+
+      this.setData({
+        form: {
+          ...this.data.form,
+          externalUrl: data.externalUrl || url,
+          restaurantName: data.restaurantName || this.data.form.restaurantName,
+          title: data.title || this.data.form.title,
+          platform: data.platform || this.data.form.platform,
+          platformLabel: data.platformLabel || this.data.form.platformLabel,
+          priceRange: data.priceRange || this.data.form.priceRange,
+          coverImageUrl: data.coverImageUrl || this.data.form.coverImageUrl
+        },
+        parseStatus: "success",
+        parseMessage: "已自动填入可识别的信息，保存前可以继续微调。"
+      });
+    } catch {
+      this.setData({
+        parseStatus: "failed",
+        parseMessage: "解析服务暂时不可用，可先手动填写并保存链接。"
+      });
+    } finally {
+      this.setData({ isParsing: false });
+    }
   },
 
-  save() {
+  async save() {
     const form = this.data.form as TakeoutForm;
     if (!form.restaurantName.trim() || !form.title.trim()) {
       wx.showToast({ title: "请填写店铺和菜单", icon: "none" });
       return;
     }
 
-    const stored = this.readStoredTakeouts();
-    const item: StoredTakeout = {
-      name: form.restaurantName.trim(),
-      desc: form.title.trim(),
-      price: form.priceRange.trim() || "价格待补",
-      likes: 0,
-      tag: this.tagFromPlatform(form.platformLabel || form.platform),
-      image: form.coverImageUrl || defaultImage,
-      platform: form.platform,
-      platformLabel: form.platformLabel,
-      externalUrl: form.externalUrl.trim(),
-      notes: form.notes.trim()
-    };
-
-    wx.setStorageSync(storageKey, [item, ...stored]);
-    wx.showToast({ title: "已保存外卖", icon: "success" });
-    setTimeout(() => wx.navigateBack(), 500);
-  },
-
-  readStoredTakeouts(): StoredTakeout[] {
     try {
-      return wx.getStorageSync(storageKey) || [];
+      await request({
+        url: "/menu-items",
+        method: "POST",
+        data: {
+          type: "takeout",
+          title: form.title.trim(),
+          subtitle: form.restaurantName.trim(),
+          restaurantName: form.restaurantName.trim(),
+          platform: form.platform || undefined,
+          externalUrl: form.externalUrl.trim() || undefined,
+          priceRange: form.priceRange.trim() || undefined,
+          coverImageUrl: form.coverImageUrl || undefined,
+          notes: form.notes.trim() || undefined,
+          mealPeriods: ["lunch", "dinner"],
+          tagNames: [form.platformLabel || "外卖"].filter(Boolean),
+          isFavorite: true
+        }
+      });
+
+      wx.showToast({ title: "已保存外卖", icon: "success" });
+      setTimeout(() => wx.navigateBack(), 500);
     } catch {
-      return [];
+      wx.showToast({ title: "保存失败，请稍后重试", icon: "none" });
     }
   },
 

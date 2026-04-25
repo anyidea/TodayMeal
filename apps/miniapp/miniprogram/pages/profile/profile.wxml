@@ -12,15 +12,15 @@
 
   <view class="stats">
     <view class="stat soft-card">
-      <text>36</text>
+      <text>{{summary.recipeCount}}</text>
       <text>我的菜谱</text>
     </view>
     <view class="stat soft-card">
-      <text>18</text>
+      <text>{{summary.takeoutCount}}</text>
       <text>外卖收藏</text>
     </view>
     <view class="stat soft-card">
-      <text>07</text>
+      <text>{{summary.recentMealCount}}</text>
       <text>本周灵感</text>
     </view>
   </view>

@@ -44,6 +44,21 @@ Page({
   },
 
   submit() {
+    const selected = this.data.selected;
+    const tagNames = [
+      this.data.scene[selected.scene]?.label,
+      this.data.type[selected.type],
+      this.data.taste[selected.taste],
+      this.data.methods[selected.methods],
+      this.data.ingredients[selected.ingredients]
+    ].filter((value) => value && value !== "全部");
+
+    wx.setStorageSync("todayMeal.recommendationFilters", {
+      type: "recipe",
+      mealPeriod: selected.scene === 4 ? "lateNight" : "dinner",
+      tagNames
+    });
+
     wx.navigateTo({ url: "/pages/result/result" });
   }
 });

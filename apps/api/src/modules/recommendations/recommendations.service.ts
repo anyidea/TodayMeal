@@ -80,8 +80,8 @@ const mealPeriodLabels: Record<MealPeriod, string> = {
 export class RecommendationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async today(filters: RecommendationFilters) {
-    const scored = await this.getScoredCandidates(filters);
+  async today(filters: RecommendationFilters, userId: string) {
+    const scored = await this.getScoredCandidates(filters, userId);
     const best = scored.sort((a, b) => b.score - a.score)[0];
 
     if (!best) {
@@ -91,8 +91,8 @@ export class RecommendationsService {
     return this.toRecommendation(best.candidate, filters.mealPeriod);
   }
 
-  async random(filters: RecommendationFilters) {
-    const scored = await this.getScoredCandidates(filters);
+  async random(filters: RecommendationFilters, userId: string) {
+    const scored = await this.getScoredCandidates(filters, userId);
     const positiveCandidates = scored.filter(({ score }) => score > 0);
     const pool = positiveCandidates.length > 0 ? positiveCandidates : scored;
 
@@ -116,9 +116,9 @@ export class RecommendationsService {
     return this.toRecommendation(pool[pool.length - 1].candidate, filters.mealPeriod);
   }
 
-  private async getScoredCandidates(filters: RecommendationFilters) {
+  private async getScoredCandidates(filters: RecommendationFilters, userId: string) {
     const candidates = await this.prisma.menuItem.findMany({
-      where: this.buildWhere(filters),
+      where: this.buildWhere(filters, userId),
       select: recommendationSelect,
       orderBy: { createdAt: 'asc' },
     });
@@ -129,9 +129,13 @@ export class RecommendationsService {
     }));
   }
 
-  private buildWhere(filters: RecommendationFilters): Prisma.MenuItemWhereInput {
+  private buildWhere(
+    filters: RecommendationFilters,
+    userId: string,
+  ): Prisma.MenuItemWhereInput {
     const where: Prisma.MenuItemWhereInput = {
       status: 'active',
+      createdById: userId,
     };
 
     if (filters.type) {

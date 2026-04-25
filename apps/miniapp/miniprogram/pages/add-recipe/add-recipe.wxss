@@ -29,10 +29,12 @@
 }
 
 .photo-card {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  overflow: hidden;
   gap: 10rpx;
   width: 260rpx;
   height: 224rpx;
@@ -42,6 +44,11 @@
   background: #f7f1ec;
   color: #8c7f76;
   font-size: 24rpx;
+}
+
+.cover-preview {
+  width: 100%;
+  height: 100%;
 }
 
 .camera {

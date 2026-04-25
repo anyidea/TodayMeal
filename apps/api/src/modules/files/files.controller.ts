@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Controller,
+  Body,
   Post,
   UploadedFile,
   UseGuards,
@@ -12,6 +13,7 @@ import { ok } from '../../common/api-response';
 import { CurrentUser, RequestUser } from '../auth/current-user.decorator';
 import { EditorGuard } from '../auth/editor.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ConfirmUploadDto, CreateUploadPolicyDto } from './dto/create-upload-policy.dto';
 import { FilesService } from './files.service';
 
 const maxUploadSizeBytes = 5 * 1024 * 1024;
@@ -25,6 +27,23 @@ const allowedImageMimeTypes = new Set([
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+
+  @UseGuards(JwtAuthGuard, EditorGuard)
+  @Post('upload-policy')
+  async createUploadPolicy(
+    @Body() dto: CreateUploadPolicyDto,
+  ) {
+    return ok(this.filesService.createUploadPolicy(dto));
+  }
+
+  @UseGuards(JwtAuthGuard, EditorGuard)
+  @Post('confirm')
+  async confirmUpload(
+    @CurrentUser() user: RequestUser,
+    @Body() dto: ConfirmUploadDto,
+  ) {
+    return ok(await this.filesService.confirmUpload(dto, user.id));
+  }
 
   @UseGuards(JwtAuthGuard, EditorGuard)
   @Post('upload')

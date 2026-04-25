@@ -5,33 +5,60 @@
     <button class="save icon-button" bindtap="save"><t-icon class="tm-icon" name="check" size="34rpx" color="#2D2520" /></button>
   </view>
 
-  <button class="photo-card">
-    <t-icon class="tm-icon camera" name="camera" size="48rpx" color="#B7895C" />
-    <text>上传封面</text>
-    <text class="tiny">建议尺寸 1:1</text>
+  <button class="photo-card" bindtap="chooseCover">
+    <image wx:if="{{form.coverImageUrl}}" class="cover-preview" src="{{form.coverImageUrl}}" mode="aspectFill"></image>
+    <block wx:else>
+      <t-icon class="tm-icon camera" name="camera" size="48rpx" color="#B7895C" />
+      <text>上传封面</text>
+      <text class="tiny">建议尺寸 1:1</text>
+    </block>
   </button>
 
   <view class="form-card card">
-    <block wx:for="{{fields}}" wx:key="label">
-      <view class="form-row">
-        <text class="label">{{item.label}}</text>
-        <view class="field-value">
-          <input placeholder="{{item.placeholder}}" placeholder-class="placeholder" value="{{item.value}}" />
-          <text wx:if="{{item.arrow}}">›</text>
-        </view>
+    <view class="form-row">
+      <text class="label">菜谱名称</text>
+      <view class="field-value">
+        <input value="{{form.title}}" data-field="title" bindinput="onInput" placeholder="请输入菜谱名称" placeholder-class="placeholder" />
       </view>
-    </block>
+    </view>
+    <view class="form-row">
+      <text class="label">分类</text>
+      <view class="field-value">
+        <input value="{{form.category}}" data-field="category" bindinput="onInput" placeholder="例如：家常菜" placeholder-class="placeholder" />
+      </view>
+    </view>
+    <view class="form-row">
+      <text class="label">口味</text>
+      <view class="field-value">
+        <input value="{{form.flavor}}" data-field="flavor" bindinput="onInput" placeholder="例如：香辣" placeholder-class="placeholder" />
+      </view>
+    </view>
+    <view class="form-row">
+      <text class="label">烹饪方式</text>
+      <view class="field-value">
+        <input value="{{form.cookingMethod}}" data-field="cookingMethod" bindinput="onInput" placeholder="例如：炒" placeholder-class="placeholder" />
+      </view>
+    </view>
+    <view class="form-row">
+      <text class="label">耗时</text>
+      <view class="field-value">
+        <input value="{{form.cookTimeMinutes}}" data-field="cookTimeMinutes" bindinput="onInput" type="number" placeholder="例如：20" placeholder-class="placeholder" />
+      </view>
+    </view>
 
-    <block wx:for="{{addRows}}" wx:key="*this">
-      <view class="form-row">
-        <text class="label">{{item}}</text>
-        <button class="add-button"><t-icon class="tm-icon" name="add" size="30rpx" color="#B7895C" /></button>
-      </view>
-    </block>
+    <view class="note-block">
+      <text class="label">食材</text>
+      <textarea value="{{form.ingredientsText}}" data-field="ingredientsText" bindinput="onInput" placeholder="每行一个食材，例如：鸡翅&#10;可乐&#10;姜片" placeholder-class="placeholder"></textarea>
+    </view>
+
+    <view class="note-block">
+      <text class="label">烹饪步骤</text>
+      <textarea value="{{form.stepsText}}" data-field="stepsText" bindinput="onInput" placeholder="每行一个步骤，例如：鸡翅焯水&#10;煎至两面金黄&#10;加入可乐焖煮" placeholder-class="placeholder"></textarea>
+    </view>
 
     <view class="note-block">
       <text class="label">备注（可选）</text>
-      <textarea placeholder="记录下这道菜的小贴士吧～" placeholder-class="placeholder"></textarea>
+      <textarea value="{{form.notes}}" data-field="notes" bindinput="onInput" placeholder="记录下这道菜的小贴士吧～" placeholder-class="placeholder"></textarea>
     </view>
   </view>
 </view>

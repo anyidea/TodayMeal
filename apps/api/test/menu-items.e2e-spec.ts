@@ -7,16 +7,17 @@ import { PrismaService } from '../src/prisma/prisma.service';
 async function createEditorToken(
   app: INestApplication,
   prisma: PrismaService,
+  openid = 'editor-openid',
 ): Promise<string> {
   await prisma.user.upsert({
-    where: { openid: 'editor-openid' },
+    where: { openid },
     update: { role: 'viewer' },
-    create: { openid: 'editor-openid', role: 'viewer' },
+    create: { openid, role: 'viewer' },
   });
 
   const login = await request(app.getHttpServer())
     .post('/auth/dev-login')
-    .send({ openid: 'editor-openid' })
+    .send({ openid })
     .expect(201);
 
   const token = login.body.data.token as string;
@@ -74,8 +75,43 @@ describe('Menu items', () => {
     await app.close();
   });
 
-  it('allows public users to list active menu items', async () => {
-    await request(app.getHttpServer()).get('/menu-items').expect(200);
+  it('requires authentication to list active menu items', async () => {
+    await request(app.getHttpServer()).get('/menu-items').expect(401);
+  });
+
+  it('lists only menu items created by the current user', async () => {
+    const firstToken = await createEditorToken(app, prisma, 'first-editor-openid');
+    const secondToken = await createEditorToken(app, prisma, 'second-editor-openid');
+
+    await request(app.getHttpServer())
+      .post('/menu-items')
+      .set('Authorization', `Bearer ${firstToken}`)
+      .send({
+        title: '第一位用户的菜',
+        type: 'recipe',
+        mealPeriods: ['dinner'],
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/menu-items')
+      .set('Authorization', `Bearer ${secondToken}`)
+      .send({
+        title: '第二位用户的菜',
+        type: 'recipe',
+        mealPeriods: ['lunch'],
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .get('/menu-items')
+      .set('Authorization', `Bearer ${firstToken}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.map((item: { title: string }) => item.title)).toEqual([
+          '第一位用户的菜',
+        ]);
+      });
   });
 
   it('rejects menu creation without an editor token', async () => {
@@ -109,7 +145,7 @@ describe('Menu items', () => {
       });
   });
 
-  it('hides archived menu item details from public users', async () => {
+  it('hides archived menu item details from its owner', async () => {
     const token = await createEditorToken(app, prisma);
     const created = await request(app.getHttpServer())
       .post('/menu-items')
@@ -128,6 +164,31 @@ describe('Menu items', () => {
 
     await request(app.getHttpServer())
       .get(`/menu-items/${created.body.data.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(404);
+  });
+
+  it('prevents users from reading or mutating another user menu item', async () => {
+    const firstToken = await createEditorToken(app, prisma, 'owner-editor-openid');
+    const secondToken = await createEditorToken(app, prisma, 'other-editor-openid');
+    const created = await request(app.getHttpServer())
+      .post('/menu-items')
+      .set('Authorization', `Bearer ${firstToken}`)
+      .send({
+        title: '只属于第一个用户',
+        type: 'recipe',
+        mealPeriods: ['dinner'],
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .get(`/menu-items/${created.body.data.id}`)
+      .set('Authorization', `Bearer ${secondToken}`)
+      .expect(404);
+
+    await request(app.getHttpServer())
+      .post(`/menu-items/${created.body.data.id}/favorite`)
+      .set('Authorization', `Bearer ${secondToken}`)
       .expect(404);
   });
 
