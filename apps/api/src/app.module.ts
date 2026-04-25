@@ -4,6 +4,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { HealthController } from './modules/health/health.controller';
 import { MealHistoryModule } from './modules/meal-history/meal-history.module';
 import { MenuItemsModule } from './modules/menu-items/menu-items.module';
+import { RecommendationsModule } from './modules/recommendations/recommendations.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { PrismaService } from './prisma/prisma.service';
 
@@ -14,6 +15,7 @@ import { PrismaService } from './prisma/prisma.service';
     MenuItemsModule,
     TagsModule,
     MealHistoryModule,
+    RecommendationsModule,
   ],
   controllers: [HealthController],
   providers: [PrismaService],
