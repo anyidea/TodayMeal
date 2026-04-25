@@ -28,6 +28,11 @@ Edit `apps/api/.env` and replace every placeholder value:
 - Set `EDITOR_INVITE_CODE` and `OWNER_OPENIDS` for the production team.
 - Keep `DATABASE_URL` pointed at `postgres:5432` when the API runs inside Docker Compose.
 - Keep `PUBLIC_BASE_URL` set to the public HTTPS API origin.
+- Configure Alibaba Cloud OSS direct uploads:
+  - `OSS_BUCKET` is the bucket name.
+  - `OSS_ENDPOINT` is the bucket upload origin, for example `https://today-meal-production.oss-cn-hangzhou.aliyuncs.com`.
+  - `OSS_PUBLIC_BASE_URL` is the public image origin, preferably a CDN/custom domain.
+  - `OSS_ACCESS_KEY_ID` and `OSS_ACCESS_KEY_SECRET` must belong to an account or RAM user with the minimum permissions needed for object uploads.
 
 Do not commit the real `apps/api/.env` file.
 
@@ -45,7 +50,7 @@ api.today-meal.example.com {
 
 Adjust the domain before using it in production.
 
-Uploaded images are served by the API under `/uploads/...`, so the same reverse proxy to `api:3000` also serves uploaded image URLs.
+The legacy multipart upload endpoint can still serve local files under `/uploads/...`, but miniapp image upload now uses OSS signed direct upload. Configure both the API domain and the OSS/CDN domain in the WeChat Mini Program request/upload/download domain settings.
 
 ## Start Services
 
