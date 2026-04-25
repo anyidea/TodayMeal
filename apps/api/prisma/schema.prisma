@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  viewer
+  editor
+  owner
+}
+
+enum MenuItemType {
+  recipe
+  takeout
+  inspiration
+}
+
+enum MealPeriod {
+  breakfast
+  lunch
+  dinner
+  lateNight
+}
+
+enum TagType {
+  system
+  custom
+}
+
+enum MenuItemStatus {
+  active
+  archived
+}
+
+model User {
+  id        String   @id @default(cuid())
+  openid    String   @unique
+  nickname  String?
+  avatarUrl String?
+  role      UserRole @default(viewer)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdMenuItems MenuItem[] @relation("MenuCreatedBy")
+  updatedMenuItems MenuItem[] @relation("MenuUpdatedBy")
+  mealHistories    MealHistory[]
+  uploadedFiles    FileAsset[]
+}
+
+model MenuItem {
+  id              String         @id @default(cuid())
+  type            MenuItemType
+  title           String
+  subtitle        String?
+  description     String?
+  coverImageUrl   String?
+  mealPeriods     MealPeriod[]
+  isFavorite      Boolean        @default(false)
+  status          MenuItemStatus @default(active)
+  ingredients     String[]
+  steps           String[]
+  cookTimeMinutes Int?
+  difficulty      String?
+  notes           String?
+  restaurantName  String?
+  platform        String?
+  externalUrl     String?
+  priceRange      String?
+  deliveryNotes   String?
+  linkPreview     Json?
+  sourceName      String?
+  sourceUrl       String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  createdById String?
+  createdBy   User? @relation("MenuCreatedBy", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User? @relation("MenuUpdatedBy", fields: [updatedById], references: [id])
+
+  tags          MenuItemTag[]
+  mealHistories MealHistory[]
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      TagType  @default(custom)
+  color     String?
+  createdAt DateTime @default(now())
+
+  menuItems MenuItemTag[]
+}
+
+model MenuItemTag {
+  menuItemId String
+  tagId      String
+
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([menuItemId, tagId])
+}
+
+model MealHistory {
+  id         String   @id @default(cuid())
+  menuItemId String
+  eatenAt    DateTime
+  rating     Int?
+  note       String?
+  createdAt  DateTime @default(now())
+
+  menuItem    MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+}
+
+model FileAsset {
+  id           String   @id @default(cuid())
+  url          String
+  storageKey   String   @unique
+  mimeType     String
+  size         Int
+  createdAt    DateTime @default(now())
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+}
