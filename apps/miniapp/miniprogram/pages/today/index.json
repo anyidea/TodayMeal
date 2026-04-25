@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "Today Meal",
-  "usingComponents": {
-    "menu-card": "/components/menu-card/index"
-  }
-}

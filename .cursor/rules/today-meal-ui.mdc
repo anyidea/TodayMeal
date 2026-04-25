@@ -1,0 +1,20 @@
+---
+description: Today Meal miniapp UI design system
+globs: apps/miniapp/miniprogram/**/*.{wxml,wxss,ts,json}
+alwaysApply: true
+---
+
+# Today Meal UI Design System
+
+- Style direction: premium, warm, healing, creamy, minimal. Prefer generous whitespace, rounded cards, soft shadows, and warm brown accents.
+- Core colors: primary `#B7895C`, primary light `#F5EAE2`, primary dark/pressed `#9F6E46`, page background `#FFF8F5`, card background `#FFFFFF`, divider `#EFE7E1`.
+- Text colors: primary `#2D2520`, secondary `#8C7F76`, tertiary `#C5BEB8`. Status colors: success `#5FB878`, alert/tip `#FF6B6B`.
+- Typography: Chinese `PingFang SC`; English can use SF Pro/DIN style. In rpx: hero title `56rpx`, page title `40rpx`, module title `32rpx`, body `28rpx`, helper `24rpx`, button `28rpx`.
+- Radius tokens in rpx: tag/small button `16rpx`, input/small card `24rpx`, main card `32rpx`, large image card `48rpx`, circle `50%`.
+- Spacing uses a 4px base grid, so use multiples of `8rpx`. Page horizontal padding `32rpx`, card padding `32rpx`, module spacing around `48rpx`.
+- Shadows: light `0 4rpx 24rpx rgba(45,37,32,0.06)`, medium `0 8rpx 40rpx rgba(45,37,32,0.08)`.
+- Buttons: primary height about `96rpx`, radius `24rpx`, background primary, white text. Secondary height about `80rpx`, radius `24rpx`, primary border/text.
+- TabBar: 5 items `首页 / 菜谱 / 随机 / 收藏 / 我的`; background white; selected primary, inactive secondary; center random button is a `112rpx` circle floating `24rpx` upward.
+- Cards and lists: dish card radius `32rpx`, padding `32rpx`, image radius `24rpx`; list row target height around `176rpx`.
+- Tags: height about `64rpx`, radius `32rpx`; selected uses primary-light background and primary text, inactive uses page background and secondary text.
+- Product pages to preserve: home greeting, random recommendation card, quick recipe/takeout entries, inspiration horizontal list, filter chips, random result, recipe list, add form, and takeout favorites.

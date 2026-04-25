@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "收藏",
-  "usingComponents": {
-    "menu-card": "/components/menu-card/index"
-  }
-}

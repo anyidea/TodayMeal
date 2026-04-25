@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "菜谱",
-  "usingComponents": {
-    "menu-card": "/components/menu-card/index",
-    "tag-filter": "/components/tag-filter/index"
-  }
-}
