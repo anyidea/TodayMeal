@@ -1,0 +1,11 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "postcss": true
+  },
+  "appid": "touristappid",
+  "projectname": "today-meal"
+}

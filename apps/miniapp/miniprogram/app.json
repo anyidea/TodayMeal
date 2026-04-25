@@ -1,0 +1,26 @@
+{
+  "pages": [
+    "pages/today/index",
+    "pages/menu/index",
+    "pages/menu-detail/index",
+    "pages/menu-edit/index",
+    "pages/profile/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "Today Meal",
+    "navigationBarBackgroundColor": "#F8FAF7",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F8FAF7"
+  },
+  "tabBar": {
+    "color": "#7A8A7D",
+    "selectedColor": "#111827",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      { "pagePath": "pages/today/index", "text": "今天" },
+      { "pagePath": "pages/menu/index", "text": "菜单" },
+      { "pagePath": "pages/profile/index", "text": "我的" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

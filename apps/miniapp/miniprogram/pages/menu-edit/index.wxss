@@ -1,0 +1,4 @@
+.placeholder {
+  padding: 48rpx;
+  color: var(--color-muted);
+}
