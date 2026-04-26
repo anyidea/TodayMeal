@@ -59,8 +59,9 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(183, 137, 92, 0.4), transparent),
-    url("https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=900&q=80");
+    radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.36), transparent 180rpx),
+    radial-gradient(circle at 88% 86%, rgba(245, 234, 226, 0.62), transparent 220rpx),
+    linear-gradient(135deg, #b7895c 0%, #cba174 48%, #f0d8c3 100%);
   background-size: cover;
   background-position: center;
 }
@@ -125,9 +126,19 @@
   box-shadow: 0 16rpx 48rpx rgba(45, 37, 32, 0.12);
 }
 
-.quick-grid {
+.dish-bubble-placeholder {
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.92), transparent 26rpx),
+    linear-gradient(135deg, #f5eae2 0%, #b7895c 100%);
+}
+
+.quick-grid,
+.add-actions {
   display: flex;
   gap: 24rpx;
+}
+
+.quick-grid {
   margin-top: 32rpx;
 }
 
@@ -183,9 +194,6 @@
 }
 
 .add-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24rpx;
   margin-top: 24rpx;
 }
 
@@ -193,11 +201,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1 1 0;
   gap: 12rpx;
+  width: 0;
+  min-width: 0;
   height: 80rpx;
   border: 1rpx solid rgba(239, 231, 225, 0.6);
   border-radius: 24rpx;
-  background: #ffffff;
+  background: #f5eae2;
   color: #b7895c;
   font-size: 26rpx;
   font-weight: 600;
@@ -205,10 +216,7 @@
 }
 
 .add-action.primary {
-  border: none;
-  background: #b7895c;
-  color: #ffffff;
-  box-shadow: 0 16rpx 40rpx rgba(183, 137, 92, 0.2);
+  color: #b7895c;
 }
 
 .section-head {
@@ -250,9 +258,18 @@
 }
 
 .dish-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 200rpx;
   height: 160rpx;
   border-radius: 32rpx 32rpx 24rpx 24rpx;
+}
+
+.dish-cover-placeholder {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.9), transparent 62rpx),
+    linear-gradient(135deg, #fff8f5 0%, #f5eae2 100%);
 }
 
 .dish-name,

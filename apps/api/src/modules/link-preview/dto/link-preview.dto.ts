@@ -1,6 +1,7 @@
-import { IsUrl } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 
 export class LinkPreviewDto {
-  @IsUrl({ require_protocol: true, require_tld: false })
+  @IsString()
+  @MinLength(1)
   url!: string;
 }

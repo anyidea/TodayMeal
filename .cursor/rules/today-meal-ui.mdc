@@ -18,3 +18,9 @@ alwaysApply: false
 - Cards and lists: dish card radius `32rpx`, padding `32rpx`, image radius `24rpx`; list row target height around `176rpx`.
 - Tags: height about `64rpx`, radius `32rpx`; selected uses primary-light background and primary text, inactive uses page background and secondary text.
 - Product pages to preserve: home greeting, random recommendation card, quick recipe/takeout entries, inspiration horizontal list, filter chips, random result, recipe list, add form, and takeout favorites.
+- UI review checklist before finishing miniapp changes: paired action buttons must use the same height and equal-width layout (`flex: 1 1 0; width: 0` or a 2-column grid); custom topbar titles must be single-line with `white-space: nowrap`; empty/simple pages need a hero/summary card plus clear primary action, not only one button on blank background.
+- Custom topbar pages must reserve the native WeChat capsule area on the right; do not add a custom share button beside or under the capsule. Use `onShareAppMessage` and the native capsule menu for page sharing unless the user explicitly asks for an in-page share CTA.
+- Form pages should keep submit/save actions as full-width primary buttons in the page content area, not as topbar icon buttons. Topbars should remain navigation-first: back, centered single-line title, and capsule-safe right spacing.
+- Default/empty food images should use CSS placeholders or local assets, not third-party remote URLs. Only load remote images when they come from user uploads or saved backend data.
+- For new pages, preserve hierarchy: topbar, contextual hero card, section header, content cards/list, then primary action. Avoid sparse pages that feel unfinished.
+- Collaboration UI: show members with overlapping avatar stacks when space allows; avoid explanatory collaboration copy unless the user explicitly asks for it.

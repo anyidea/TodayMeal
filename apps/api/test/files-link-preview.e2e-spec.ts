@@ -47,6 +47,24 @@ async function createEditorToken(
   return token;
 }
 
+async function createViewerToken(
+  app: NestExpressApplication,
+  prisma: PrismaService,
+): Promise<string> {
+  await prisma.user.upsert({
+    where: { openid: 'avatar-viewer-openid' },
+    update: { role: 'viewer' },
+    create: { openid: 'avatar-viewer-openid', role: 'viewer' },
+  });
+
+  const login = await request(app.getHttpServer())
+    .post('/auth/dev-login')
+    .send({ openid: 'avatar-viewer-openid' })
+    .expect(201);
+
+  return login.body.data.token as string;
+}
+
 const tinyJpeg = Buffer.from([0xff, 0xd8, 0xff, 0xdb, 0x00, 0x43, 0x00, 0xff, 0xd9]);
 const tinyGif = Buffer.from('GIF89a');
 
@@ -141,6 +159,26 @@ describe('Files and link preview', () => {
       .expect('Content-Type', /image\/jpeg/);
 
     await expect(prisma.fileAsset.count()).resolves.toBe(1);
+  });
+
+  it('allows signed-in viewers to upload an avatar image', async () => {
+    const token = await createViewerToken(app, prisma);
+
+    await request(app.getHttpServer())
+      .post('/files/avatar')
+      .set('Authorization', `Bearer ${token}`)
+      .attach('file', tinyJpeg, {
+        filename: 'avatar.jpg',
+        contentType: 'image/jpeg',
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.url).toMatch(
+          /^https:\/\/static\.example\.test\/uploads\/\d{4}\/\d{2}\/.+\.jpg$/,
+        );
+        expect(body.data.mimeType).toBe('image/jpeg');
+        expect(body.data.size).toBe(tinyJpeg.byteLength);
+      });
   });
 
   it('rejects uploads over five megabytes', async () => {
@@ -343,6 +381,105 @@ describe('Files and link preview', () => {
           priceRange: '¥88',
           coverImageUrl: 'https://example.com/fish.jpg',
           description: '美团外卖，约30分钟送达',
+        });
+      });
+  });
+
+  it('parses Dianping short share text after redirect', async () => {
+    (undiciFetch as jest.MockedFunction<typeof undiciFetch>)
+      .mockResolvedValueOnce(
+        new Response(null, {
+          status: 302,
+          headers: {
+            location: 'https://m.dianping.com/shopshare/item/123',
+          },
+        }) as never,
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          `
+            <html>
+              <head>
+                <meta property="og:title" content="老福鼎肉片 - 福鼎肉片+葱花蛋饼套餐" />
+                <meta property="og:image" content="https://example.com/fuding.jpg" />
+                <meta name="description" content="折扣力度前10%商品" />
+              </head>
+            </html>
+          `,
+          {
+            status: 200,
+            headers: {
+              'content-type': 'text/html; charset=utf-8',
+            },
+          },
+        ) as never,
+      );
+
+    await request(app.getHttpServer())
+      .post('/link-preview/takeout')
+      .send({
+        url: '这家店的「福鼎肉片+葱花蛋饼套餐」值得一试，折扣力度前10%商品，分享给你看看，点击链接可以查看商品详情  http://dpurl.cn/T5SPMM3z',
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          status: 'success',
+          platform: 'meituan',
+          platformLabel: '美团',
+          url: 'http://dpurl.cn/T5SPMM3z',
+          externalUrl: 'https://m.dianping.com/shopshare/item/123',
+          restaurantName: '老福鼎肉片',
+          title: '福鼎肉片+葱花蛋饼套餐',
+          coverImageUrl: 'https://example.com/fuding.jpg',
+          description: '折扣力度前10%商品',
+        });
+      });
+  });
+
+  it('uses Dianping share text when the redirected page only has generic metadata', async () => {
+    (undiciFetch as jest.MockedFunction<typeof undiciFetch>)
+      .mockResolvedValueOnce(
+        new Response(null, {
+          status: 302,
+          headers: {
+            location: 'https://h5.waimai.meituan.com/waimai/mindex/menu?poi_id_str=123',
+          },
+        }) as never,
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          `
+            <html>
+              <head>
+                <title>美团外卖</title>
+              </head>
+              <body>Main</body>
+            </html>
+          `,
+          {
+            status: 200,
+            headers: {
+              'content-type': 'text/html; charset=utf-8',
+            },
+          },
+        ) as never,
+      );
+
+    await request(app.getHttpServer())
+      .post('/link-preview/takeout')
+      .send({
+        url: '这家店的「青椒火腿鸡蛋盖码饭」值得一试，10+回头客推荐，分享给你看看，点击链接可以查看商品详情  http://dpurl.cn/KgBN6KMz',
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          status: 'success',
+          platform: 'meituan',
+          platformLabel: '美团',
+          url: 'http://dpurl.cn/KgBN6KMz',
+          externalUrl: 'https://h5.waimai.meituan.com/waimai/mindex/menu?poi_id_str=123',
+          title: '青椒火腿鸡蛋盖码饭',
+          description: '10+回头客推荐',
         });
       });
   });

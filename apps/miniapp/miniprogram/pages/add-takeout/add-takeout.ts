@@ -1,4 +1,4 @@
-import { request } from "../../utils/api";
+import { isAuthRequiredError, request, requireLogin } from "../../utils/api";
 
 type TakeoutForm = {
   externalUrl: string;
@@ -94,17 +94,23 @@ Page({
         parseStatus: "success",
         parseMessage: "已自动填入可识别的信息，保存前可以继续微调。"
       });
-    } catch {
-      this.setData({
-        parseStatus: "failed",
-        parseMessage: "解析服务暂时不可用，可先手动填写并保存链接。"
-      });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        this.setData({
+          parseStatus: "failed",
+          parseMessage: "解析服务暂时不可用，可先手动填写并保存链接。"
+        });
+      }
     } finally {
       this.setData({ isParsing: false });
     }
   },
 
   async save() {
+    if (!requireLogin()) {
+      return;
+    }
+
     const form = this.data.form as TakeoutForm;
     if (!form.restaurantName.trim() || !form.title.trim()) {
       wx.showToast({ title: "请填写店铺和菜单", icon: "none" });
@@ -133,8 +139,10 @@ Page({
 
       wx.showToast({ title: "已保存外卖", icon: "success" });
       setTimeout(() => wx.navigateBack(), 500);
-    } catch {
-      wx.showToast({ title: "保存失败，请稍后重试", icon: "none" });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "保存失败，请稍后重试", icon: "none" });
+      }
     }
   },
 

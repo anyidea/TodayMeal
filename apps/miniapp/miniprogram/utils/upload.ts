@@ -1,4 +1,4 @@
-import { request } from "./api";
+import { clearLocalAuth, getApiUrl, getToken, redirectToLogin, request } from "./api";
 
 type UploadPolicy = {
   uploadUrl: string;
@@ -17,15 +17,26 @@ type UploadedFile = {
 export async function uploadImage(filePath: string): Promise<UploadedFile> {
   const fileInfo = await getFileInfo(filePath);
   const mimeType = inferMimeType(filePath);
-  const policy = await request<UploadPolicy>({
-    url: "/files/upload-policy",
-    method: "POST",
-    data: {
-      fileName: filePath.split("/").pop() || "image.jpg",
-      mimeType,
-      size: fileInfo.size
+  let policy: UploadPolicy;
+  try {
+    policy = await request<UploadPolicy>({
+      url: "/files/upload-policy",
+      method: "POST",
+      data: {
+        fileName: filePath.split("/").pop() || "image.jpg",
+        mimeType,
+        size: fileInfo.size
+      }
+    });
+  } catch (error) {
+    if (isLocalUploadFallbackError(error)) {
+      return uploadToApi(filePath, {
+        url: "/files/upload"
+      });
     }
-  });
+
+    throw error;
+  }
 
   await uploadToOss(filePath, policy);
 
@@ -38,6 +49,12 @@ export async function uploadImage(filePath: string): Promise<UploadedFile> {
       mimeType,
       size: fileInfo.size
     }
+  });
+}
+
+export async function uploadAvatar(filePath: string): Promise<UploadedFile> {
+  return uploadToApi(filePath, {
+    url: "/files/avatar"
   });
 }
 
@@ -64,6 +81,54 @@ function uploadToOss(filePath: string, policy: UploadPolicy): Promise<void> {
           return;
         }
 
+        if (res.statusCode === 401) {
+          clearLocalAuth();
+          redirectToLogin();
+          reject({
+            ...res,
+            authRequired: true
+          });
+          return;
+        }
+
+        reject(res);
+      },
+      fail: reject
+    });
+  });
+}
+
+function uploadToApi(
+  filePath: string,
+  options: { url: string }
+): Promise<UploadedFile> {
+  return new Promise((resolve, reject) => {
+    const token = getToken();
+
+    wx.uploadFile({
+      url: getApiUrl(options.url),
+      filePath,
+      name: "file",
+      header: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      success: (res) => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          const body = JSON.parse(res.data) as { data: UploadedFile };
+          resolve(body.data);
+          return;
+        }
+
+        if (res.statusCode === 401) {
+          clearLocalAuth();
+          redirectToLogin();
+          reject({
+            ...res,
+            authRequired: true
+          });
+          return;
+        }
+
         reject(res);
       },
       fail: reject
@@ -84,4 +149,18 @@ function inferMimeType(filePath: string): string {
   }
 
   return "image/jpeg";
+}
+
+function isLocalUploadFallbackError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const response = error as WechatMiniprogram.RequestSuccessCallbackResult;
+  const data = response.data as { message?: string } | undefined;
+  return (
+    response.statusCode === 400 &&
+    typeof data?.message === "string" &&
+    data.message.startsWith("OSS_")
+  );
 }

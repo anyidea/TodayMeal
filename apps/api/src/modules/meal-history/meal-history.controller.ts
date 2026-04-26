@@ -19,8 +19,9 @@ export class MealHistoryController {
     return ok(await this.mealHistoryService.create(dto, user.id));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('recent')
-  async recent() {
-    return ok(await this.mealHistoryService.recent());
+  async recent(@CurrentUser() user: RequestUser) {
+    return ok(await this.mealHistoryService.recent(user.id));
   }
 }

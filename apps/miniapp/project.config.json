@@ -2,6 +2,7 @@
   "miniprogramRoot": "miniprogram/",
   "compileType": "miniprogram",
   "setting": {
+    "urlCheck": false,
     "es6": true,
     "minified": true,
     "postcss": true,

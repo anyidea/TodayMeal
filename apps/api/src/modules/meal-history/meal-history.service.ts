@@ -1,16 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { GroupsService } from '../groups/groups.service';
 import { CreateMealHistoryDto } from './dto/create-meal-history.dto';
 
 @Injectable()
 export class MealHistoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly groupsService: GroupsService,
+  ) {}
 
   async create(dto: CreateMealHistoryDto, userId: string) {
+    const groupId = await this.groupsService.currentGroupId(userId);
     const menuItem = await this.prisma.menuItem.findFirst({
       where: {
         id: dto.menuItemId,
         status: 'active',
+        groupId,
       },
     });
 
@@ -24,6 +30,7 @@ export class MealHistoryService {
         eatenAt: dto.eatenAt ? new Date(dto.eatenAt) : new Date(),
         rating: dto.rating,
         note: dto.note,
+        groupId,
         createdById: userId,
       },
       include: {
@@ -40,8 +47,10 @@ export class MealHistoryService {
     });
   }
 
-  recent() {
+  async recent(userId: string) {
+    const groupId = await this.groupsService.currentGroupId(userId);
     return this.prisma.mealHistory.findMany({
+      where: { groupId },
       include: {
         menuItem: {
           select: {

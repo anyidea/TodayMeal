@@ -3,12 +3,10 @@
   padding-bottom: 140rpx;
 }
 
-.back {
-  color: #2d2520;
-}
-
-.share {
-  color: #8c7f76;
+.result-topbar {
+  position: relative;
+  justify-content: flex-start;
+  padding-right: 190rpx;
 }
 
 .icon-button {
@@ -19,14 +17,29 @@
   height: 64rpx;
 }
 
-.icon-button .tm-icon {
-  width: 34rpx;
-  height: 34rpx;
+.back {
+  flex: 0 0 64rpx;
+  color: #2d2520;
 }
 
 .page-title {
+  position: absolute;
+  left: 50%;
+  max-width: 260rpx;
+  overflow: hidden;
+  color: #2d2520;
   font-size: 32rpx;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.capsule-space {
+  flex: 1;
+  min-width: 190rpx;
 }
 
 .confetti {
@@ -97,11 +110,21 @@
 }
 
 .main-dish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 448rpx;
   margin-top: 36rpx;
   border-radius: 32rpx;
   box-shadow: 0 18rpx 44rpx rgba(45, 37, 32, 0.16);
+}
+
+.main-dish-placeholder {
+  background:
+    radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.92), transparent 120rpx),
+    radial-gradient(circle at 78% 74%, rgba(183, 137, 92, 0.18), transparent 140rpx),
+    linear-gradient(135deg, #fff8f5 0%, #f5eae2 100%);
 }
 
 .action-row {
@@ -136,10 +159,20 @@
   padding-bottom: 14rpx;
 }
 
-.pair-card image {
+.pair-card image,
+.pair-cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 118rpx;
   border-radius: 26rpx 26rpx 18rpx 18rpx;
+}
+
+.pair-cover-placeholder {
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.88), transparent 44rpx),
+    linear-gradient(135deg, #fff8f5 0%, #f5eae2 100%);
 }
 
 .pair-card text {

@@ -1,12 +1,12 @@
 services:
   postgres:
-    image: postgres:16
+    image: postgres:18
     env_file:
       - apps/api/.env
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data2:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
@@ -29,4 +29,4 @@ services:
       - ./apps/api/uploads:/app/apps/api/uploads
 
 volumes:
-  postgres_data:
+  postgres_data2:

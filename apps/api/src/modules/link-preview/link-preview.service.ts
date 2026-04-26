@@ -25,6 +25,11 @@ type LinkPreviewResult =
 
 type TakeoutPlatform = 'meituan' | 'taobao_flash' | 'unknown';
 
+type TakeoutShareInfo = {
+  title?: string;
+  description?: string;
+};
+
 type TakeoutLinkPreviewResult =
   | {
       status: 'success';
@@ -66,9 +71,11 @@ type ValidatedAddress = {
 
 @Injectable()
 export class LinkPreviewService {
-  async preview(url: string): Promise<LinkPreviewResult> {
+  async preview(input: string): Promise<LinkPreviewResult> {
+    const url = this.extractFirstUrl(input) ?? input;
+
     try {
-      const html = await this.fetchHtml(url);
+      const { html } = await this.fetchHtml(url);
       const metadata = this.parseMetadata(html);
 
       if (!metadata.title && !metadata.imageUrl && !metadata.description) {
@@ -85,19 +92,26 @@ export class LinkPreviewService {
     }
   }
 
-  async previewTakeout(url: string): Promise<TakeoutLinkPreviewResult> {
-    const platform = this.detectTakeoutPlatform(url);
+  async previewTakeout(input: string): Promise<TakeoutLinkPreviewResult> {
+    const url = this.extractFirstUrl(input) ?? input;
+    const shareInfo = this.extractTakeoutShareInfo(input);
+    const initialPlatform = this.detectTakeoutPlatform(url);
 
     try {
-      const html = await this.fetchHtml(url);
+      const { html, finalUrl } = await this.fetchHtml(url);
+      const platform = this.resolveTakeoutPlatform(url, finalUrl, initialPlatform);
       const metadata = this.parseMetadata(html);
-      const titleParts = this.parseTakeoutTitle(metadata.title, platform);
-      const priceRange = this.extractPrice(metadata.title ?? metadata.description);
+      const title = this.isGenericTakeoutTitle(metadata.title)
+        ? shareInfo.title
+        : (metadata.title ?? shareInfo.title);
+      const description = metadata.description ?? shareInfo.description;
+      const titleParts = this.parseTakeoutTitle(title, platform);
+      const priceRange = this.extractPrice(title ?? description);
 
       if (
-        !metadata.title &&
+        !title &&
         !metadata.imageUrl &&
-        !metadata.description
+        !description
       ) {
         return this.failedTakeout(url, platform);
       }
@@ -105,22 +119,42 @@ export class LinkPreviewService {
       return {
         status: 'success',
         url,
-        externalUrl: url,
+        externalUrl: finalUrl,
         platform,
         platformLabel: this.platformLabel(platform),
         title: titleParts.title,
         restaurantName: titleParts.restaurantName,
         priceRange,
         coverImageUrl: metadata.imageUrl,
-        description: metadata.description,
-        linkPreview: metadata,
+        description,
+        linkPreview: {
+          title,
+          imageUrl: metadata.imageUrl,
+          description,
+        },
       };
     } catch {
-      return this.failedTakeout(url, platform);
+      if (shareInfo.title || shareInfo.description) {
+        return {
+          status: 'success',
+          url,
+          externalUrl: url,
+          platform: initialPlatform,
+          platformLabel: this.platformLabel(initialPlatform),
+          title: shareInfo.title,
+          description: shareInfo.description,
+          linkPreview: {
+            title: shareInfo.title,
+            description: shareInfo.description,
+          },
+        };
+      }
+
+      return this.failedTakeout(url, initialPlatform);
     }
   }
 
-  private async fetchHtml(url: string): Promise<string> {
+  private async fetchHtml(url: string): Promise<{ html: string; finalUrl: string }> {
     let currentUrl = new URL(url);
 
     for (let redirectCount = 0; redirectCount <= maxRedirects; redirectCount++) {
@@ -147,13 +181,33 @@ export class LinkPreviewService {
         }
 
         this.assertHtmlResponse(response);
-        return await this.readLimitedText(response);
+        return {
+          html: await this.readLimitedText(response),
+          finalUrl: currentUrl.toString(),
+        };
       } finally {
         await dispatcher.close();
       }
     }
 
     throw new Error('too many redirects');
+  }
+
+  private extractFirstUrl(value: string): string | undefined {
+    const match = value.match(/https?:\/\/[^\s，。"'<>]+/i);
+    return match?.[0];
+  }
+
+  private extractTakeoutShareInfo(value: string): TakeoutShareInfo {
+    const title = value.match(/「([^」]+)」/)?.[1]?.trim();
+    const description = value
+      .match(/值得一试，(.+?)，分享给你看看/)?.[1]
+      ?.trim();
+
+    return {
+      title: title || undefined,
+      description: description || undefined,
+    };
   }
 
   private async fetchOnce(
@@ -424,6 +478,8 @@ export class LinkPreviewService {
       const hostname = new URL(url).hostname.toLowerCase();
 
       if (
+        hostname === 'dpurl.cn' ||
+        hostname.endsWith('.dpurl.cn') ||
         hostname === 'meituan.com' ||
         hostname.endsWith('.meituan.com') ||
         hostname === 'dianping.com' ||
@@ -449,6 +505,24 @@ export class LinkPreviewService {
     }
 
     return 'unknown';
+  }
+
+  private resolveTakeoutPlatform(
+    originalUrl: string,
+    finalUrl: string,
+    initialPlatform: TakeoutPlatform,
+  ): TakeoutPlatform {
+    const finalPlatform = this.detectTakeoutPlatform(finalUrl);
+    if (finalPlatform !== 'unknown') {
+      return finalPlatform;
+    }
+
+    const originalPlatform = this.detectTakeoutPlatform(originalUrl);
+    if (originalPlatform !== 'unknown') {
+      return originalPlatform;
+    }
+
+    return initialPlatform;
   }
 
   private platformLabel(platform: TakeoutPlatform): string {
@@ -490,6 +564,14 @@ export class LinkPreviewService {
     }
 
     return { title: withoutPrice };
+  }
+
+  private isGenericTakeoutTitle(title: string | undefined): boolean {
+    if (!title) {
+      return false;
+    }
+
+    return ['美团外卖', '美团', 'Main'].includes(title.trim());
   }
 
   private cleanTitle(rawTitle: string | undefined): string | undefined {

@@ -4,38 +4,138 @@
 
 .profile-card {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex-direction: column;
+  gap: 18rpx;
   margin-top: 42rpx;
-  padding: 48rpx 34rpx;
-  text-align: center;
+  padding: 28rpx;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+
+.status-text {
+  color: #8c7f76;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.avatar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 104rpx;
+  height: 104rpx;
+  overflow: hidden;
+  flex: 0 0 104rpx;
+  border: 4rpx solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 10rpx 26rpx rgba(183, 137, 92, 0.16);
 }
 
 .avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 132rpx;
-  height: 132rpx;
+  width: 104rpx;
+  height: 104rpx;
+  flex: 0 0 104rpx;
   border-radius: 50%;
   background: #b7895c;
   color: #fff;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 36rpx;
+  font-size: 30rpx;
   font-weight: 800;
+  box-shadow: 0 10rpx 26rpx rgba(183, 137, 92, 0.14);
+}
+
+.avatar-image {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: #f5eae2;
+}
+
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .name {
-  margin-top: 24rpx;
+  display: block;
+  overflow: hidden;
   color: #2d2520;
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.desc {
-  margin-top: 12rpx;
-  color: #8c7f76;
+.profile-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  padding: 18rpx;
+  border-radius: 24rpx;
+  background: #fffaf7;
+}
+
+.setup-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setup-title {
+  color: #2d2520;
   font-size: 24rpx;
+  font-weight: 700;
+}
+
+.setup-tip {
+  color: #8c7f76;
+  font-size: 22rpx;
+}
+
+.setup-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.nickname-input {
+  flex: 1;
+  height: 56rpx;
+  min-width: 0;
+  padding: 0 20rpx;
+  border-radius: 18rpx;
+  background: #fff8f5;
+  color: #2d2520;
+  font-size: 24rpx;
+}
+
+.profile-link {
+  height: 56rpx;
+  flex: 0 0 132rpx;
+  min-width: 132rpx;
+  padding: 0 18rpx;
+  border-radius: 18rpx;
+  background: #fff8f5;
+  color: #b7895c;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 56rpx;
+  text-align: center;
+}
+
+.muted-link {
+  color: #8c7f76;
 }
 
 .stats {
@@ -63,4 +163,103 @@
   margin-top: 8rpx;
   color: #8c7f76;
   font-size: 22rpx;
+}
+
+.group-card {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+  margin-top: 24rpx;
+  padding: 28rpx;
+}
+
+.group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.group-eyebrow {
+  display: block;
+  color: #8c7f76;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.group-name {
+  display: block;
+  margin-top: 8rpx;
+  color: #2d2520;
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  min-width: 144rpx;
+  padding-left: 20rpx;
+}
+
+.stack-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58rpx;
+  height: 58rpx;
+  overflow: hidden;
+  margin-left: -14rpx;
+  border: 4rpx solid #fff;
+  border-radius: 50%;
+  background: #f5eae2;
+  color: #b7895c;
+  font-size: 20rpx;
+  font-weight: 800;
+  box-shadow: 0 8rpx 20rpx rgba(45, 37, 32, 0.06);
+}
+
+.stack-avatar:first-child {
+  margin-left: 0;
+}
+
+.stack-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.stack-extra {
+  background: #b7895c;
+  color: #fff;
+}
+
+.group-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.group-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  width: 0;
+  height: 72rpx;
+  border-radius: 22rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.group-action.secondary {
+  background: #f5eae2;
+  color: #b7895c;
+}
+
+.group-action.primary {
+  background: #b7895c;
+  color: #fff;
 }

@@ -1,9 +1,11 @@
-import { request } from "../../utils/api";
+import { isAuthRequiredError, request, requireLogin } from "../../utils/api";
 
 type RecommendationItem = {
   id: string;
+  type?: "recipe" | "takeout";
   title: string;
   subtitle?: string;
+  restaurantName?: string;
   coverImageUrl?: string;
   tags: { name: string }[];
 };
@@ -13,16 +15,13 @@ type Recommendation = {
   reason: string;
 };
 
-const fallbackImage =
-  "https://images.unsplash.com/photo-1604909052743-94e838986d24?auto=format&fit=crop&w=900&q=90";
-
 Page({
   data: {
     item: {
       id: "",
       title: "今日还没有推荐",
       subtitle: "先添加几道菜谱，再来随机灵感",
-      coverImageUrl: fallbackImage,
+      coverImageUrl: "",
       tags: []
     } as RecommendationItem,
     reasonTags: ["适合今天"],
@@ -30,20 +29,25 @@ Page({
     tags: [
       {
         name: "清炒西兰花",
-        image: "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=180&q=80"
+        image: ""
       },
       {
         name: "米饭",
-        image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=180&q=80"
+        image: ""
       },
       {
         name: "冰红茶",
-        image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=180&q=80"
+        image: ""
       }
     ]
   },
 
-  onLoad() {
+  onLoad(options: { itemId?: string }) {
+    if (options.itemId) {
+      this.loadSharedItem(options.itemId);
+      return;
+    }
+
     this.loadRecommendation();
   },
 
@@ -51,15 +55,15 @@ Page({
     wx.navigateBack();
   },
 
-  share() {
-    wx.showToast({ title: "已生成分享图", icon: "none" });
-  },
-
   again() {
     this.loadRecommendation();
   },
 
   async favorite() {
+    if (!requireLogin()) {
+      return;
+    }
+
     if (!this.data.item.id) {
       return;
     }
@@ -70,12 +74,18 @@ Page({
         method: "POST"
       });
       wx.showToast({ title: "已收藏", icon: "success" });
-    } catch {
-      wx.showToast({ title: "收藏失败", icon: "none" });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "收藏失败", icon: "none" });
+      }
     }
   },
 
   async loadRecommendation() {
+    if (!requireLogin()) {
+      return;
+    }
+
     const filters =
       wx.getStorageSync("todayMeal.recommendationFilters") || {
         type: "recipe",
@@ -83,32 +93,82 @@ Page({
       };
 
     try {
-      const result = await request<Recommendation>({
+      const result = await request<Recommendation | null>({
         url: "/recommendations/random",
         method: "POST",
         data: filters
       });
 
+      if (!result) {
+        wx.showToast({ title: "还没有可推荐的菜", icon: "none" });
+        return;
+      }
+
       this.setData({
-        item: {
-          ...result.item,
-          subtitle:
-            result.item.subtitle ||
-            result.item.tags.map((tag) => tag.name).join(" / ") ||
-            "今天的灵感菜单",
-          coverImageUrl: result.item.coverImageUrl || fallbackImage
-        },
+        item: this.toDisplayItem(result.item),
         reasonTags: this.toReasonTags(result),
         matchPercent: 88 + Math.floor(Math.random() * 10)
       });
-    } catch {
-      wx.showToast({ title: "还没有可推荐的菜", icon: "none" });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "还没有可推荐的菜", icon: "none" });
+      }
+    }
+  },
+
+  async loadSharedItem(itemId: string) {
+    if (!requireLogin()) {
+      return;
+    }
+
+    try {
+      const item = await request<RecommendationItem>({
+        url: `/menu-items/${itemId}`
+      });
+      this.setData({
+        item: this.toDisplayItem(item),
+        reasonTags: this.toItemReasonTags(item),
+        matchPercent: 92
+      });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "这份推荐暂时打不开", icon: "none" });
+        this.loadRecommendation();
+      }
     }
   },
 
   toReasonTags(result: Recommendation): string[] {
     const tagNames = result.item.tags.map((tag) => tag.name).filter(Boolean);
     return tagNames.length ? tagNames.slice(0, 3) : [result.reason];
+  },
+
+  toItemReasonTags(item: RecommendationItem): string[] {
+    const tagNames = item.tags.map((tag) => tag.name).filter(Boolean);
+    return tagNames.length ? tagNames.slice(0, 3) : ["适合今天"];
+  },
+
+  toDisplayItem(item: RecommendationItem): RecommendationItem {
+    return {
+      ...item,
+      subtitle:
+        item.subtitle ||
+        item.restaurantName ||
+        item.tags.map((tag) => tag.name).join(" / ") ||
+        "今天的灵感菜单",
+      coverImageUrl: item.coverImageUrl || ""
+    };
+  },
+
+  onShareAppMessage() {
+    const item = this.data.item;
+    const isEmpty = !item.id;
+
+    return {
+      title: isEmpty ? "今天吃什么？来 Today Meal 随机一下" : `今天吃「${item.title}」怎么样？`,
+      path: isEmpty ? "/pages/home/home" : `/pages/result/result?itemId=${encodeURIComponent(item.id)}`,
+      ...(item.coverImageUrl ? { imageUrl: item.coverImageUrl } : {})
+    };
   },
 
   goHome() {

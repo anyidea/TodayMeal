@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { MealPeriod, MenuItemType, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { GroupsService } from '../groups/groups.service';
 
 type Candidate = {
   id: string;
@@ -78,7 +79,10 @@ const mealPeriodLabels: Record<MealPeriod, string> = {
 
 @Injectable()
 export class RecommendationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly groupsService: GroupsService,
+  ) {}
 
   async today(filters: RecommendationFilters, userId: string) {
     const scored = await this.getScoredCandidates(filters, userId);
@@ -97,7 +101,7 @@ export class RecommendationsService {
     const pool = positiveCandidates.length > 0 ? positiveCandidates : scored;
 
     if (pool.length === 0) {
-      throw new NotFoundException();
+      return null;
     }
 
     const totalWeight = pool.reduce(
@@ -117,8 +121,9 @@ export class RecommendationsService {
   }
 
   private async getScoredCandidates(filters: RecommendationFilters, userId: string) {
+    const groupId = await this.groupsService.currentGroupId(userId);
     const candidates = await this.prisma.menuItem.findMany({
-      where: this.buildWhere(filters, userId),
+      where: this.buildWhere(filters, groupId),
       select: recommendationSelect,
       orderBy: { createdAt: 'asc' },
     });
@@ -131,11 +136,11 @@ export class RecommendationsService {
 
   private buildWhere(
     filters: RecommendationFilters,
-    userId: string,
+    groupId: string,
   ): Prisma.MenuItemWhereInput {
     const where: Prisma.MenuItemWhereInput = {
       status: 'active',
-      createdById: userId,
+      groupId,
     };
 
     if (filters.type) {

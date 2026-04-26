@@ -1,0 +1,47 @@
+<view class="page groups-page">
+  <view class="topbar">
+    <button class="back icon-button" bindtap="back">
+      <t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" />
+    </button>
+    <text class="page-title">我的饭团</text>
+    <view class="capsule-space"></view>
+  </view>
+
+  <view class="group-hero card">
+    <view class="hero-icon">
+      <t-icon class="tm-icon" name="usergroup" size="46rpx" color="#B7895C" />
+    </view>
+    <view class="hero-copy">
+      <text class="hero-title">和饭搭子一起决定今天吃什么</text>
+      <text class="hero-desc">切换饭团后，菜谱、外卖收藏和随机推荐都会跟着切换。</text>
+    </view>
+  </view>
+
+  <view class="section-head">
+    <text class="section-title">可切换饭团</text>
+    <text class="section-subtitle">{{groups.length}} 个</text>
+  </view>
+
+  <view class="group-list">
+    <block wx:for="{{groups}}" wx:key="id">
+      <view
+        class="group-item soft-card {{item.id === currentGroupId ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="chooseGroup"
+      >
+        <view class="group-avatar">
+          <t-icon class="tm-icon" name="usergroup" size="34rpx" color="{{item.id === currentGroupId ? '#FFFFFF' : '#B7895C'}}" />
+        </view>
+        <view class="group-main">
+          <text class="group-name">{{item.name}}</text>
+          <text class="group-meta">{{item.memberCount}} 位饭搭子</text>
+        </view>
+        <view class="group-status {{item.id === currentGroupId ? 'current' : ''}}">
+          <text>{{item.id === currentGroupId ? '当前' : '切换'}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <button class="primary-button invite-entry" bindtap="goInvite">邀请或加入饭团</button>
+</view>

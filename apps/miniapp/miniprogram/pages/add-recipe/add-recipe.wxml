@@ -2,7 +2,7 @@
   <view class="topbar">
     <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
     <text class="page-title">添加菜谱</text>
-    <button class="save icon-button" bindtap="save"><t-icon class="tm-icon" name="check" size="34rpx" color="#2D2520" /></button>
+    <view class="capsule-space"></view>
   </view>
 
   <button class="photo-card" bindtap="chooseCover">
@@ -61,4 +61,6 @@
       <textarea value="{{form.notes}}" data-field="notes" bindinput="onInput" placeholder="记录下这道菜的小贴士吧～" placeholder-class="placeholder"></textarea>
     </view>
   </view>
+
+  <button class="save-action primary-button" loading="{{isSaving}}" bindtap="save">保存菜谱</button>
 </view>

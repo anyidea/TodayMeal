@@ -34,11 +34,14 @@ describe('Recommendations', () => {
 
   beforeEach(async () => {
     jest.restoreAllMocks();
+    await prisma.mealGroupInvite.deleteMany();
     await prisma.mealHistory.deleteMany();
     await prisma.menuItemTag.deleteMany();
     await prisma.menuItem.deleteMany();
     await prisma.tag.deleteMany();
+    await prisma.mealGroupMember.deleteMany();
     await prisma.user.deleteMany();
+    await prisma.mealGroup.deleteMany();
   });
 
   afterAll(async () => {
@@ -68,10 +71,11 @@ describe('Recommendations', () => {
     return {
       token,
       userId: login.body.data.user.id as string,
+      groupId: login.body.data.currentGroupId as string,
     };
   }
 
-  async function seedRecommendationCandidates(userId: string) {
+  async function seedRecommendationCandidates(userId: string, groupId: string) {
     await prisma.menuItem.create({
       data: {
         title: '番茄牛腩饭',
@@ -80,6 +84,7 @@ describe('Recommendations', () => {
         isFavorite: true,
         ingredients: [],
         steps: [],
+        groupId,
         createdById: userId,
         updatedById: userId,
       },
@@ -92,11 +97,13 @@ describe('Recommendations', () => {
         mealPeriods: [MealPeriod.dinner],
         ingredients: [],
         steps: [],
+        groupId,
         createdById: userId,
         updatedById: userId,
         mealHistories: {
           create: {
             eatenAt: new Date(Date.now() - 86400000),
+            groupId,
             createdById: userId,
           },
         },
@@ -110,6 +117,7 @@ describe('Recommendations', () => {
         mealPeriods: [MealPeriod.breakfast],
         ingredients: [],
         steps: [],
+        groupId,
         createdById: userId,
         updatedById: userId,
       },
@@ -124,8 +132,8 @@ describe('Recommendations', () => {
   });
 
   it('returns a deterministic weighted random dinner recommendation', async () => {
-    const { token, userId } = await createEditorToken();
-    await seedRecommendationCandidates(userId);
+    const { token, userId, groupId } = await createEditorToken();
+    await seedRecommendationCandidates(userId, groupId);
     jest.spyOn(Math, 'random').mockReturnValue(0);
 
     await request(app.getHttpServer())
@@ -140,8 +148,8 @@ describe('Recommendations', () => {
   });
 
   it('does not include other meal periods in random dinner recommendations', async () => {
-    const { token, userId } = await createEditorToken();
-    await seedRecommendationCandidates(userId);
+    const { token, userId, groupId } = await createEditorToken();
+    await seedRecommendationCandidates(userId, groupId);
     jest.spyOn(Math, 'random').mockReturnValue(0.99);
 
     await request(app.getHttpServer())
@@ -156,8 +164,8 @@ describe('Recommendations', () => {
   });
 
   it('returns the highest scored dinner recommendation for today', async () => {
-    const { token, userId } = await createEditorToken();
-    await seedRecommendationCandidates(userId);
+    const { token, userId, groupId } = await createEditorToken();
+    await seedRecommendationCandidates(userId, groupId);
 
     await request(app.getHttpServer())
       .get('/recommendations/today?mealPeriod=dinner')
@@ -169,15 +177,18 @@ describe('Recommendations', () => {
       });
   });
 
-  it('does not recommend another user menu items', async () => {
+  it('returns an empty random recommendation when no menu items match', async () => {
     const first = await createEditorToken('first-recommendation-openid');
     const second = await createEditorToken('second-recommendation-openid');
-    await seedRecommendationCandidates(first.userId);
+    await seedRecommendationCandidates(first.userId, first.groupId);
 
     await request(app.getHttpServer())
       .post('/recommendations/random')
       .set('Authorization', `Bearer ${second.token}`)
       .send({ mealPeriod: 'dinner' })
-      .expect(404);
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data).toBeNull();
+      });
   });
 });

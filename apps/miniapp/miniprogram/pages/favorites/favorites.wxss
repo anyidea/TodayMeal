@@ -90,6 +90,7 @@
   display: flex;
   min-height: 200rpx;
   padding: 24rpx;
+  gap: 24rpx;
 }
 
 .store-cover-wrap {
@@ -100,9 +101,18 @@
 }
 
 .store-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 160rpx;
   height: 160rpx;
   border-radius: 24rpx;
+}
+
+.store-img-placeholder {
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.86), transparent 56rpx),
+    linear-gradient(135deg, #fff8f5 0%, #f5eae2 100%);
 }
 
 .corner-tag {
@@ -127,8 +137,8 @@
   flex: 1;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8rpx 0 8rpx 24rpx;
   min-width: 0;
+  padding: 8rpx 0;
 }
 
 .store-top,
@@ -139,10 +149,13 @@
 }
 
 .store-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   color: #2d2520;
   font-size: 32rpx;
-  font-weight: 600;
-  overflow: hidden;
+  font-weight: 700;
+  line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -153,7 +166,12 @@
   justify-content: center;
   width: 48rpx;
   height: 48rpx;
-  flex-shrink: 0;
+  flex: 0 0 48rpx;
+  border-radius: 50%;
+}
+
+.more-btn:active {
+  background: #fff8f5;
 }
 
 .store-desc {
@@ -169,26 +187,43 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16rpx;
   margin-top: auto;
 }
 
 .price {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   color: #2d2520;
   font-family: "DIN", -apple-system, sans-serif;
   font-size: 32rpx;
   font-weight: 700;
   letter-spacing: -0.5rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.store-spacer {
+  flex: 1;
+  min-width: 0;
 }
 
 .meta-tag {
   display: flex;
   align-items: center;
-  padding: 4rpx 12rpx;
-  border-radius: 12rpx;
-  background: #f9f6f4;
+  min-height: 44rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  background: #fff8f5;
   color: #8c7f76;
   font-size: 22rpx;
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.favorite-tag {
+  background: rgba(255, 107, 107, 0.1);
+  color: #d85d5d;
 }
 
 .meta-tag .icon-inline {
@@ -199,6 +234,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   min-width: 88rpx;
   height: 48rpx;
   padding: 0 20rpx;

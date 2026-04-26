@@ -36,18 +36,65 @@ enum MenuItemStatus {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  openid    String   @unique
-  nickname  String?
-  avatarUrl String?
-  role      UserRole @default(viewer)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  openid         String   @unique
+  nickname       String?
+  avatarUrl      String?
+  role           UserRole @default(viewer)
+  currentGroupId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
+  currentGroup    MealGroup?        @relation("UserCurrentGroup", fields: [currentGroupId], references: [id], onDelete: SetNull)
+  createdGroups   MealGroup[]       @relation("MealGroupCreatedBy")
+  groupMemberships MealGroupMember[]
+  createdInvites  MealGroupInvite[] @relation("MealGroupInviteCreatedBy")
   createdMenuItems MenuItem[] @relation("MenuCreatedBy")
   updatedMenuItems MenuItem[] @relation("MenuUpdatedBy")
   mealHistories    MealHistory[]
   uploadedFiles    FileAsset[]
+}
+
+model MealGroup {
+  id          String   @id @default(cuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String?
+  createdBy   User?    @relation("MealGroupCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  currentUsers  User[]            @relation("UserCurrentGroup")
+  members       MealGroupMember[]
+  invites       MealGroupInvite[]
+  menuItems     MenuItem[]
+  tags          Tag[]
+  mealHistories MealHistory[]
+}
+
+model MealGroupMember {
+  groupId  String
+  userId   String
+  role     String   @default("member")
+  joinedAt DateTime @default(now())
+
+  group MealGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, userId])
+  @@index([userId])
+}
+
+model MealGroupInvite {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  groupId     String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  group     MealGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdBy User?     @relation("MealGroupInviteCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([groupId])
 }
 
 model MenuItem {
@@ -75,7 +122,9 @@ model MenuItem {
   sourceUrl       String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+  groupId         String?
 
+  group       MealGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
   createdById String?
   createdBy   User? @relation("MenuCreatedBy", fields: [createdById], references: [id])
   updatedById String?
@@ -87,12 +136,16 @@ model MenuItem {
 
 model Tag {
   id        String   @id @default(cuid())
-  name      String   @unique
+  name      String
   type      TagType  @default(custom)
   color     String?
+  groupId   String?
   createdAt DateTime @default(now())
 
+  group     MealGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
   menuItems MenuItemTag[]
+
+  @@unique([groupId, name])
 }
 
 model MenuItemTag {
@@ -112,7 +165,9 @@ model MealHistory {
   rating     Int?
   note       String?
   createdAt  DateTime @default(now())
+  groupId    String?
 
+  group       MealGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
   menuItem    MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
   createdById String?
   createdBy   User?    @relation(fields: [createdById], references: [id])

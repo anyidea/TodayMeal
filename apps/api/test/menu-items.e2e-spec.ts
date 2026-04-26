@@ -64,11 +64,14 @@ describe('Menu items', () => {
     process.env.EDITOR_INVITE_CODE = 'invite-123';
     process.env.OWNER_OPENIDS = 'owner-openid';
 
+    await prisma.mealGroupInvite.deleteMany();
     await prisma.mealHistory.deleteMany();
     await prisma.menuItemTag.deleteMany();
     await prisma.menuItem.deleteMany();
     await prisma.tag.deleteMany();
+    await prisma.mealGroupMember.deleteMany();
     await prisma.user.deleteMany();
+    await prisma.mealGroup.deleteMany();
   });
 
   afterAll(async () => {
@@ -79,7 +82,7 @@ describe('Menu items', () => {
     await request(app.getHttpServer()).get('/menu-items').expect(401);
   });
 
-  it('lists only menu items created by the current user', async () => {
+  it('lists only menu items in the current meal group', async () => {
     const firstToken = await createEditorToken(app, prisma, 'first-editor-openid');
     const secondToken = await createEditorToken(app, prisma, 'second-editor-openid');
 
@@ -111,6 +114,80 @@ describe('Menu items', () => {
         expect(body.data.map((item: { title: string }) => item.title)).toEqual([
           '第一位用户的菜',
         ]);
+      });
+  });
+
+  it('accepts local upload URLs as menu item cover images', async () => {
+    const token = await createEditorToken(app, prisma, 'local-cover-editor-openid');
+
+    await request(app.getHttpServer())
+      .post('/menu-items')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: '本地封面菜谱',
+        type: 'recipe',
+        mealPeriods: ['dinner'],
+        coverImageUrl: 'http://localhost:3000/uploads/2026/04/local-cover.jpg',
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.coverImageUrl).toBe(
+          'http://localhost:3000/uploads/2026/04/local-cover.jpg',
+        );
+      });
+  });
+
+  it('lets invited meal group members read and edit shared menu items', async () => {
+    const ownerLogin = await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'shared-owner-openid' })
+      .expect(201);
+    const ownerToken = ownerLogin.body.data.token as string;
+    const ownerGroupId = ownerLogin.body.data.currentGroupId as string;
+
+    const invite = await request(app.getHttpServer())
+      .post(`/groups/${ownerGroupId}/invites`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(201);
+
+    const memberLogin = await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'shared-member-openid' })
+      .expect(201);
+    const memberToken = memberLogin.body.data.token as string;
+
+    await request(app.getHttpServer())
+      .post('/groups/join')
+      .set('Authorization', `Bearer ${memberToken}`)
+      .send({ inviteCode: invite.body.data.inviteCode })
+      .expect(201);
+
+    const created = await request(app.getHttpServer())
+      .post('/menu-items')
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({
+        title: '饭团共享菜',
+        type: 'recipe',
+        mealPeriods: ['dinner'],
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .get('/menu-items')
+      .set('Authorization', `Bearer ${memberToken}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.map((item: { title: string }) => item.title)).toEqual([
+          '饭团共享菜',
+        ]);
+      });
+
+    await request(app.getHttpServer())
+      .post(`/menu-items/${created.body.data.id}/favorite`)
+      .set('Authorization', `Bearer ${memberToken}`)
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.isFavorite).toBe(true);
       });
   });
 
@@ -217,7 +294,7 @@ describe('Menu items', () => {
       });
   });
 
-  it('records meal history and returns recent history publicly', async () => {
+  it('records meal history and returns recent history in the current group', async () => {
     const token = await createEditorToken(app, prisma);
     const created = await request(app.getHttpServer())
       .post('/menu-items')
@@ -246,6 +323,7 @@ describe('Menu items', () => {
 
     await request(app.getHttpServer())
       .get('/meal-history/recent')
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect(({ body }) => {
         expect(body.data[0].note).toBe('很好吃');
@@ -264,6 +342,7 @@ describe('Menu items', () => {
 
     await request(app.getHttpServer())
       .get('/tags')
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect(({ body }) => {
         expect(body.data.map((tag: { name: string }) => tag.name)).toContain(

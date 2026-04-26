@@ -33,11 +33,14 @@ describe('Profile', () => {
   });
 
   beforeEach(async () => {
+    await prisma.mealGroupInvite.deleteMany();
     await prisma.mealHistory.deleteMany();
     await prisma.menuItemTag.deleteMany();
     await prisma.menuItem.deleteMany();
     await prisma.tag.deleteMany();
+    await prisma.mealGroupMember.deleteMany();
     await prisma.user.deleteMany();
+    await prisma.mealGroup.deleteMany();
   });
 
   afterAll(async () => {
@@ -64,6 +67,7 @@ describe('Profile', () => {
     return {
       token,
       userId: login.body.data.user.id as string,
+      groupId: login.body.data.currentGroupId as string,
     };
   }
 
@@ -71,8 +75,55 @@ describe('Profile', () => {
     await request(app.getHttpServer()).get('/profile/summary').expect(401);
   });
 
+  it('returns and updates the current user profile', async () => {
+    const { token } = await createEditorToken();
+
+    await request(app.getHttpServer())
+      .get('/profile/me')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          openid: 'profile-editor-openid',
+          nickname: null,
+          avatarUrl: null,
+          role: 'editor',
+        });
+      });
+
+    await request(app.getHttpServer())
+      .patch('/profile/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        nickname: '今天吃饱了',
+        avatarUrl: 'https://static.example.test/uploads/avatar.jpg',
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data).toMatchObject({
+          nickname: '今天吃饱了',
+          avatarUrl: 'https://static.example.test/uploads/avatar.jpg',
+          role: 'editor',
+        });
+      });
+
+    await expect(
+      prisma.user.findUnique({ where: { openid: 'profile-editor-openid' } }),
+    ).resolves.toMatchObject({
+      nickname: '今天吃饱了',
+      avatarUrl: 'https://static.example.test/uploads/avatar.jpg',
+    });
+  });
+
+  it('requires authentication to update the current user profile', async () => {
+    await request(app.getHttpServer())
+      .patch('/profile/me')
+      .send({ nickname: '访客' })
+      .expect(401);
+  });
+
   it('returns current user menu and history counts', async () => {
-    const { token, userId } = await createEditorToken();
+    const { token, userId, groupId } = await createEditorToken();
     const other = await prisma.user.create({
       data: { openid: 'other-profile-openid', role: 'editor' },
     });
@@ -85,6 +136,7 @@ describe('Profile', () => {
         isFavorite: true,
         ingredients: [],
         steps: [],
+        groupId,
         createdById: userId,
         updatedById: userId,
       },
@@ -97,6 +149,7 @@ describe('Profile', () => {
         isFavorite: true,
         ingredients: [],
         steps: [],
+        groupId,
         createdById: userId,
         updatedById: userId,
       },
@@ -117,6 +170,7 @@ describe('Profile', () => {
       data: {
         menuItemId: recipe.id,
         eatenAt: new Date(),
+        groupId,
         createdById: userId,
       },
     });

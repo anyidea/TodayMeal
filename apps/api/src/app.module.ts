@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { FilesModule } from './modules/files/files.module';
+import { GroupsModule } from './modules/groups/groups.module';
 import { HealthController } from './modules/health/health.controller';
 import { LinkPreviewModule } from './modules/link-preview/link-preview.module';
 import { MealHistoryModule } from './modules/meal-history/meal-history.module';
@@ -21,6 +22,7 @@ import { PrismaService } from './prisma/prisma.service';
     ProfileModule,
     RecommendationsModule,
     FilesModule,
+    GroupsModule,
     LinkPreviewModule,
   ],
   controllers: [HealthController],

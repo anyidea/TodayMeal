@@ -1,0 +1,118 @@
+.group-invite-page {
+  padding-bottom: 120rpx;
+}
+
+.top-placeholder {
+  width: 72rpx;
+  height: 72rpx;
+}
+
+.invite-card,
+.join-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-top: 32rpx;
+  padding: 32rpx;
+}
+
+.card-title {
+  color: #2d2520;
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.card-desc {
+  color: #8c7f76;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.share-join-card {
+  align-items: flex-start;
+}
+
+.share-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 26rpx;
+  background: #f5eae2;
+}
+
+.share-button {
+  gap: 12rpx;
+  width: 100%;
+}
+
+.share-button[disabled] {
+  background: #d9c8b8;
+  color: #ffffff;
+}
+
+.share-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48rpx;
+  border-radius: 16rpx;
+  background: #fff8f5;
+  color: #b7895c;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.code-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 26rpx;
+  border-radius: 24rpx;
+  background: #fff8f5;
+  color: #b7895c;
+  font-family: "DIN", -apple-system, sans-serif;
+  font-size: 34rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+}
+
+.copy-text {
+  color: #8c7f76;
+  font-family: inherit;
+  font-size: 22rpx;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.join-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.join-input {
+  flex: 1 1 0;
+  height: 80rpx;
+  min-width: 0;
+  padding: 0 24rpx;
+  border-radius: 24rpx;
+  background: #fff8f5;
+  color: #2d2520;
+  font-size: 26rpx;
+}
+
+.join-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112rpx;
+  height: 80rpx;
+  border-radius: 24rpx;
+  background: #f5eae2;
+  color: #b7895c;
+  font-size: 26rpx;
+  font-weight: 700;
+}

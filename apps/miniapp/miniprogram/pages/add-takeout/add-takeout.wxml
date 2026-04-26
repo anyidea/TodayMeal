@@ -2,7 +2,7 @@
   <view class="topbar">
     <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
     <text class="page-title">添加外卖</text>
-    <button class="save icon-button" bindtap="save"><t-icon class="tm-icon" name="check" size="34rpx" color="#2D2520" /></button>
+    <view class="capsule-space"></view>
   </view>
 
   <view class="hero-card card">
@@ -19,7 +19,7 @@
     <view class="link-head">
       <view>
         <text class="link-title">外卖链接</text>
-        <text class="link-desc">支持美团、淘宝闪购链接，解析后自动填入信息。</text>
+        <text class="link-desc">支持美团、大众点评短链、淘宝闪购，分享文案也可直接粘贴。</text>
       </view>
       <button class="parse-button" loading="{{isParsing}}" bindtap="parseLink">解析</button>
     </view>
@@ -59,4 +59,6 @@
       <textarea value="{{form.notes}}" data-field="notes" bindinput="onInput" placeholder="比如配送快、分量足、适合加班夜宵～" placeholder-class="placeholder"></textarea>
     </view>
   </view>
+
+  <button class="save-action primary-button" bindtap="save">保存外卖</button>
 </view>

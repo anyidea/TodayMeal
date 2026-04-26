@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { GroupsService } from '../groups/groups.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { ListMenuItemsDto } from './dto/list-menu-items.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
@@ -25,18 +26,23 @@ type MenuItemWithRelations = Prisma.MenuItemGetPayload<{
 
 @Injectable()
 export class MenuItemsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly groupsService: GroupsService,
+  ) {}
 
   async create(dto: CreateMenuItemDto, userId: string) {
+    const groupId = await this.groupsService.currentGroupId(userId);
     const { tagNames, ...data } = dto;
     const menuItem = await this.prisma.menuItem.create({
       data: {
         ...data,
         ingredients: dto.ingredients ?? [],
         steps: dto.steps ?? [],
+        groupId,
         createdById: userId,
         updatedById: userId,
-        tags: this.buildTagCreates(tagNames),
+        tags: this.buildTagCreates(tagNames, groupId),
       },
       include: menuItemInclude,
     });
@@ -45,9 +51,10 @@ export class MenuItemsService {
   }
 
   async list(query: ListMenuItemsDto, userId: string) {
+    const groupId = await this.groupsService.currentGroupId(userId);
     const where: Prisma.MenuItemWhereInput = {
       status: 'active',
-      createdById: userId,
+      groupId,
     };
 
     if (query.type) {
@@ -97,11 +104,12 @@ export class MenuItemsService {
   }
 
   async getById(id: string, userId: string) {
+    const groupId = await this.groupsService.currentGroupId(userId);
     const menuItem = await this.prisma.menuItem.findFirst({
       where: {
         id,
         status: 'active',
-        createdById: userId,
+        groupId,
       },
       include: menuItemInclude,
     });
@@ -114,7 +122,8 @@ export class MenuItemsService {
   }
 
   async update(id: string, dto: UpdateMenuItemDto, userId: string) {
-    await this.ensureActive(id, userId);
+    const groupId = await this.groupsService.currentGroupId(userId);
+    await this.ensureActive(id, groupId);
 
     const { tagNames, ...data } = dto;
     const menuItem = await this.prisma.menuItem.update({
@@ -127,7 +136,7 @@ export class MenuItemsService {
             ? undefined
             : {
                 deleteMany: {},
-                ...this.buildTagCreates(tagNames),
+                ...this.buildTagCreates(tagNames, groupId),
               },
       },
       include: menuItemInclude,
@@ -137,7 +146,8 @@ export class MenuItemsService {
   }
 
   async archive(id: string, userId: string) {
-    await this.ensureActive(id, userId);
+    const groupId = await this.groupsService.currentGroupId(userId);
+    await this.ensureActive(id, groupId);
 
     const menuItem = await this.prisma.menuItem.update({
       where: { id },
@@ -151,7 +161,8 @@ export class MenuItemsService {
   }
 
   async toggleFavorite(id: string, userId: string) {
-    const current = await this.ensureActive(id, userId);
+    const groupId = await this.groupsService.currentGroupId(userId);
+    const current = await this.ensureActive(id, groupId);
     const menuItem = await this.prisma.menuItem.update({
       where: { id },
       data: {
@@ -163,7 +174,10 @@ export class MenuItemsService {
     return this.toResponse(menuItem);
   }
 
-  private buildTagCreates(tagNames?: string[]): Prisma.MenuItemTagCreateNestedManyWithoutMenuItemInput | undefined {
+  private buildTagCreates(
+    tagNames: string[] | undefined,
+    groupId: string,
+  ): Prisma.MenuItemTagCreateNestedManyWithoutMenuItemInput | undefined {
     if (!tagNames?.length) {
       return undefined;
     }
@@ -172,10 +186,16 @@ export class MenuItemsService {
       create: tagNames.map((name) => ({
         tag: {
           connectOrCreate: {
-            where: { name },
+            where: {
+              groupId_name: {
+                groupId,
+                name,
+              },
+            },
             create: {
               name,
               type: 'custom',
+              groupId,
             },
           },
         },
@@ -183,12 +203,12 @@ export class MenuItemsService {
     };
   }
 
-  private async ensureActive(id: string, userId: string) {
+  private async ensureActive(id: string, groupId: string) {
     const menuItem = await this.prisma.menuItem.findFirst({
       where: {
         id,
         status: 'active',
-        createdById: userId,
+        groupId,
       },
     });
 

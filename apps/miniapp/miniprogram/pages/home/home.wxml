@@ -22,7 +22,8 @@
     </view>
     <view class="dish-bubbles">
       <block wx:for="{{miniDishes}}" wx:key="*this">
-        <image class="dish-bubble" src="{{item}}" mode="aspectFill"></image>
+        <image wx:if="{{item}}" class="dish-bubble" src="{{item}}" mode="aspectFill"></image>
+        <view wx:else class="dish-bubble dish-bubble-placeholder"></view>
       </block>
     </view>
   </view>
@@ -33,20 +34,20 @@
         <text class="quick-title">我的菜谱</text>
         <text class="quick-subtitle">查看 / 新增菜谱</text>
       </view>
-      <view class="quick-icon"><t-icon class="tm-icon" name="grid-view" size="32rpx" color="#B7895C" /></view>
+      <view class="quick-icon"><t-icon class="tm-icon" name="book-open" size="32rpx" color="#B7895C" /></view>
     </button>
     <button class="quick-card soft-card" bindtap="goFavorites">
       <view>
         <text class="quick-title">外卖收藏</text>
         <text class="quick-subtitle">查看 / 新增外卖</text>
       </view>
-      <view class="quick-icon"><t-icon class="tm-icon" name="app" size="32rpx" color="#B7895C" /></view>
+      <view class="quick-icon"><t-icon class="tm-icon" name="shop" size="32rpx" color="#B7895C" /></view>
     </button>
   </view>
 
   <view class="add-actions">
     <button class="add-action primary" bindtap="goAddRecipe">
-      <t-icon name="add" size="32rpx" color="#FFFFFF" />
+      <t-icon name="add" size="32rpx" color="#B7895C" />
       <text>添加菜谱</text>
     </button>
     <button class="add-action" bindtap="goAddTakeout">
@@ -64,7 +65,10 @@
     <view class="dish-row">
       <block wx:for="{{dishes}}" wx:key="name">
         <view class="dish-card soft-card">
-          <image class="dish-cover" src="{{item.image}}" mode="aspectFill"></image>
+          <image wx:if="{{item.image}}" class="dish-cover" src="{{item.image}}" mode="aspectFill"></image>
+          <view wx:else class="dish-cover dish-cover-placeholder">
+            <t-icon class="tm-icon" name="rice-ball" size="42rpx" color="#B7895C" />
+          </view>
           <text class="dish-name">{{item.name}}</text>
           <text class="dish-meta">{{item.meta}}</text>
         </view>

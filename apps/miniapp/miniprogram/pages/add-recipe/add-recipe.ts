@@ -1,4 +1,4 @@
-import { request } from "../../utils/api";
+import { isAuthRequiredError, request, requireLogin } from "../../utils/api";
 import { uploadImage } from "../../utils/upload";
 
 type RecipeForm = {
@@ -41,6 +41,10 @@ Page({
   },
 
   chooseCover() {
+    if (!requireLogin()) {
+      return;
+    }
+
     wx.chooseMedia({
       count: 1,
       mediaType: ["image"],
@@ -51,8 +55,10 @@ Page({
           try {
             const uploaded = await uploadImage(filePath);
             this.setData({ "form.coverImageUrl": uploaded.url });
-          } catch {
-            wx.showToast({ title: "封面上传失败，可稍后重试", icon: "none" });
+          } catch (error) {
+            if (!isAuthRequiredError(error)) {
+              wx.showToast({ title: "封面上传失败，可稍后重试", icon: "none" });
+            }
           }
         }
       }
@@ -60,6 +66,10 @@ Page({
   },
 
   async save() {
+    if (!requireLogin()) {
+      return;
+    }
+
     const form = this.data.form as RecipeForm;
     if (!form.title.trim()) {
       wx.showToast({ title: "请输入菜谱名称", icon: "none" });
@@ -95,8 +105,10 @@ Page({
 
       wx.showToast({ title: "已保存菜谱", icon: "success" });
       setTimeout(() => wx.navigateBack(), 500);
-    } catch {
-      wx.showToast({ title: "保存失败，请稍后重试", icon: "none" });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "保存失败，请稍后重试", icon: "none" });
+      }
     } finally {
       this.setData({ isSaving: false });
     }

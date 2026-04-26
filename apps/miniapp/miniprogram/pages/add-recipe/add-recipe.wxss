@@ -1,13 +1,21 @@
 .add-page {
-  padding-bottom: 56rpx;
+  padding-bottom: 88rpx;
+}
+
+.add-page .topbar {
+  position: relative;
+  justify-content: flex-start;
+  padding-right: 190rpx;
 }
 
 .back {
   color: #2d2520;
+  flex: 0 0 64rpx;
 }
 
-.save {
-  color: #2d2520;
+.capsule-space {
+  flex: 1;
+  min-width: 190rpx;
 }
 
 .icon-button {
@@ -24,8 +32,18 @@
 }
 
 .page-title {
+  position: absolute;
+  left: 50%;
+  max-width: 260rpx;
+  overflow: hidden;
+  color: #2d2520;
   font-size: 32rpx;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .photo-card {
@@ -35,15 +53,16 @@
   justify-content: center;
   flex-direction: column;
   overflow: hidden;
-  gap: 10rpx;
-  width: 260rpx;
-  height: 224rpx;
-  margin: 34rpx auto 26rpx;
+  gap: 12rpx;
+  width: 100%;
+  height: 280rpx;
+  margin: 34rpx 0 26rpx;
   border: 1rpx dashed #efe7e1;
-  border-radius: 28rpx;
+  border-radius: 32rpx;
   background: #f7f1ec;
   color: #8c7f76;
   font-size: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(45, 37, 32, 0.03);
 }
 
 .cover-preview {
@@ -124,4 +143,9 @@
   background: #fff8f5;
   color: #2d2520;
   font-size: 24rpx;
+}
+
+.save-action {
+  width: 100%;
+  margin-top: 28rpx;
 }

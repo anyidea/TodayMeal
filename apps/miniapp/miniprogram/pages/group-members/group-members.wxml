@@ -1,0 +1,33 @@
+<view class="page group-members-page">
+  <view class="topbar">
+    <button class="back icon-button" bindtap="back">
+      <t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" />
+    </button>
+    <text class="page-title">饭搭子</text>
+    <view class="capsule-space"></view>
+  </view>
+
+  <view class="members-card card">
+    <text class="group-name">{{currentGroupName || '我的饭团'}}</text>
+    <block wx:for="{{members}}" wx:key="userId">
+      <view class="member-row">
+        <view
+          class="member-avatar-wrap {{item.canRemove ? 'removable' : ''}}"
+          data-user-id="{{item.userId}}"
+          data-can-remove="{{item.canRemove ? '1' : '0'}}"
+          bindtap="removeMember"
+        >
+          <image wx:if="{{item.avatarUrl}}" class="member-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+          <view wx:else class="member-avatar fallback">TM</view>
+          <view wx:if="{{item.canRemove}}" class="remove-dot">×</view>
+        </view>
+        <view class="member-main">
+          <text class="member-name">{{item.nickname || '今天也要好好吃饭'}}</text>
+          <text class="member-role">{{item.canRemove ? '点头像可移除' : '饭团成员'}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <button class="invite-action primary-button" bindtap="goInvite">邀请饭搭子</button>
+</view>

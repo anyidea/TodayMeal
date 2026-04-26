@@ -27,7 +27,14 @@ describe('Auth', () => {
     process.env.NODE_ENV = 'test';
     process.env.ENABLE_DEV_LOGIN = 'true';
     process.env.OWNER_OPENIDS = 'owner-openid';
+    await prisma.mealGroupInvite.deleteMany();
+    await prisma.mealGroupMember.deleteMany();
+    await prisma.menuItemTag.deleteMany();
+    await prisma.mealHistory.deleteMany();
+    await prisma.menuItem.deleteMany();
+    await prisma.tag.deleteMany();
     await prisma.user.deleteMany();
+    await prisma.mealGroup.deleteMany();
   });
 
   afterAll(async () => {
@@ -92,6 +99,135 @@ describe('Auth', () => {
       .post('/auth/dev-login')
       .send({ openid: 'user-openid' })
       .expect(201);
+  });
+
+  it('returns saved profile fields on login', async () => {
+    await prisma.user.create({
+      data: {
+        openid: 'profile-openid',
+        nickname: '今天吃饱了',
+        avatarUrl: 'https://static.example.test/avatar.jpg',
+      },
+    });
+
+    await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'profile-openid' })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.user).toMatchObject({
+          openid: 'profile-openid',
+          nickname: '今天吃饱了',
+          avatarUrl: 'https://static.example.test/avatar.jpg',
+        });
+      });
+  });
+
+  it('creates a default meal group on login and returns current group state', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'group-owner-openid' })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.user.openid).toBe('group-owner-openid');
+        expect(body.data.groups).toHaveLength(1);
+        expect(body.data.groups[0]).toMatchObject({
+          name: '我的饭团',
+          memberCount: 1,
+        });
+        expect(body.data.currentGroupId).toBe(body.data.groups[0].id);
+      });
+
+    await expect(prisma.mealGroup.count()).resolves.toBe(1);
+    await expect(prisma.mealGroupMember.count()).resolves.toBe(1);
+  });
+
+  it('lets a user join an invited meal group while keeping their own group', async () => {
+    const ownerLogin = await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'meal-group-owner-openid' })
+      .expect(201);
+    const ownerToken = ownerLogin.body.data.token as string;
+    const ownerGroupId = ownerLogin.body.data.currentGroupId as string;
+
+    const invite = await request(app.getHttpServer())
+      .post(`/groups/${ownerGroupId}/invites`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(201);
+
+    const memberLogin = await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'meal-group-member-openid' })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/groups/join')
+      .set('Authorization', `Bearer ${memberLogin.body.data.token}`)
+      .send({ inviteCode: invite.body.data.inviteCode })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.data.currentGroupId).toBe(ownerGroupId);
+        expect(body.data.groups.map((group: { id: string }) => group.id)).toContain(
+          ownerGroupId,
+        );
+        expect(body.data.groups).toHaveLength(2);
+      });
+  });
+
+  it('lets the meal group owner remove an invited member', async () => {
+    const ownerLogin = await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'remove-owner-openid' })
+      .expect(201);
+    const ownerToken = ownerLogin.body.data.token as string;
+    const ownerUserId = ownerLogin.body.data.user.id as string;
+    const ownerGroupId = ownerLogin.body.data.currentGroupId as string;
+
+    const invite = await request(app.getHttpServer())
+      .post(`/groups/${ownerGroupId}/invites`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(201);
+
+    const memberLogin = await request(app.getHttpServer())
+      .post('/auth/dev-login')
+      .send({ openid: 'remove-member-openid' })
+      .expect(201);
+    const memberToken = memberLogin.body.data.token as string;
+    const memberUserId = memberLogin.body.data.user.id as string;
+
+    await request(app.getHttpServer())
+      .post('/groups/join')
+      .set('Authorization', `Bearer ${memberToken}`)
+      .send({ inviteCode: invite.body.data.inviteCode })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/groups/${ownerGroupId}/members/${ownerUserId}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(403);
+
+    await request(app.getHttpServer())
+      .delete(`/groups/${ownerGroupId}/members/${ownerUserId}`)
+      .set('Authorization', `Bearer ${memberToken}`)
+      .expect(403);
+
+    await request(app.getHttpServer())
+      .delete(`/groups/${ownerGroupId}/members/${memberUserId}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.memberCount).toBe(1);
+      });
+
+    await request(app.getHttpServer())
+      .get(`/groups/${ownerGroupId}/members`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.data.map((member: { userId: string }) => member.userId)).toEqual([
+          ownerUserId,
+        ]);
+      });
   });
 
   it('rejects wrong invite code', async () => {

@@ -1,8 +1,10 @@
 <view class="page result-page">
-  <view class="topbar">
-    <button class="back icon-button" bindtap="back"><t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" /></button>
+  <view class="topbar result-topbar">
+    <button class="back icon-button" bindtap="back">
+      <t-icon class="tm-icon" name="chevron-left" size="34rpx" color="#2D2520" />
+    </button>
     <text class="page-title">今日幸运餐</text>
-    <button class="share icon-button" bindtap="share"><t-icon class="tm-icon" name="share" size="34rpx" color="#8C7F76" /></button>
+    <view class="capsule-space"></view>
   </view>
 
   <view class="confetti">
@@ -16,7 +18,10 @@
     <view class="celebrate"><t-icon class="tm-icon" name="fork" size="30rpx" color="#B7895C" /><text>今天就吃吧！</text></view>
     <text class="dish-title">{{item.title}}</text>
     <text class="dish-sub">{{item.subtitle}}</text>
-    <image class="main-dish" src="{{item.coverImageUrl}}" mode="aspectFill"></image>
+    <image wx:if="{{item.coverImageUrl}}" class="main-dish" src="{{item.coverImageUrl}}" mode="aspectFill"></image>
+    <view wx:else class="main-dish main-dish-placeholder">
+      <t-icon class="tm-icon" name="rice-ball" size="88rpx" color="#B7895C" />
+    </view>
 
     <view class="action-row">
       <button class="ghost-button" bindtap="favorite"><t-icon class="tm-icon icon-inline" name="heart" size="24rpx" color="#B7895C" />收藏</button>
@@ -27,7 +32,10 @@
     <view class="pair-row">
       <block wx:for="{{tags}}" wx:key="name">
         <view class="pair-card soft-card">
-          <image src="{{item.image}}" mode="aspectFill"></image>
+          <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"></image>
+          <view wx:else class="pair-cover-placeholder">
+            <t-icon class="tm-icon" name="rice-ball" size="30rpx" color="#B7895C" />
+          </view>
           <text>{{item.name}}</text>
         </view>
       </block>

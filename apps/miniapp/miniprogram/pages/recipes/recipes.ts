@@ -1,4 +1,4 @@
-import { request } from "../../utils/api";
+import { isAuthRequiredError, request, requireLogin } from "../../utils/api";
 
 type Tag = {
   name: string;
@@ -10,11 +10,9 @@ type MenuItem = {
   subtitle?: string;
   coverImageUrl?: string;
   cookTimeMinutes?: number;
+  isFavorite?: boolean;
   tags: Tag[];
 };
-
-const fallbackImage =
-  "https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=280&q=80";
 
 Page({
   data: {
@@ -35,6 +33,10 @@ Page({
   },
 
   async loadRecipes() {
+    if (!requireLogin()) {
+      return;
+    }
+
     const tab = this.data.tabs[this.data.activeTab];
     const query = tab === "全部" ? "" : `&tag=${encodeURIComponent(tab)}`;
 
@@ -52,20 +54,64 @@ Page({
             item.subtitle ||
             item.tags.map((tag) => tag.name).filter(Boolean).join("　") ||
             "未分类",
-          time: item.cookTimeMinutes ? `${item.cookTimeMinutes}分钟` : "未设置",
-          likes: 0,
-          image: item.coverImageUrl || fallbackImage
+          time: item.cookTimeMinutes ? `${item.cookTimeMinutes}分钟` : "",
+          isFavorite: Boolean(item.isFavorite),
+          image: item.coverImageUrl || ""
         }))
       });
-    } catch {
-      wx.showToast({ title: "菜谱加载失败", icon: "none" });
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "菜谱加载失败", icon: "none" });
+      }
     } finally {
       this.setData({ isLoading: false });
     }
   },
 
   goAdd() {
+    if (!requireLogin()) {
+      return;
+    }
+
     wx.navigateTo({ url: "/pages/add-recipe/add-recipe" });
+  },
+
+  showRecipeMenu(event: WechatMiniprogram.TouchEvent) {
+    const { id, favorite } = event.currentTarget.dataset as {
+      id?: string;
+      favorite?: string;
+    };
+    if (!id) {
+      return;
+    }
+
+    wx.showActionSheet({
+      itemList: [favorite === "1" ? "取消收藏" : "收藏"],
+      success: ({ tapIndex }) => {
+        if (tapIndex === 0) {
+          this.toggleFavorite(id);
+        }
+      }
+    });
+  },
+
+  async toggleFavorite(id: string) {
+    if (!requireLogin()) {
+      return;
+    }
+
+    try {
+      await request({
+        url: `/menu-items/${id}/favorite`,
+        method: "POST"
+      });
+      wx.showToast({ title: "已更新收藏", icon: "success" });
+      await this.loadRecipes();
+    } catch (error) {
+      if (!isAuthRequiredError(error)) {
+        wx.showToast({ title: "操作失败", icon: "none" });
+      }
+    }
   },
 
   goHome() {
@@ -73,10 +119,18 @@ Page({
   },
 
   goRandom() {
+    if (!requireLogin()) {
+      return;
+    }
+
     wx.navigateTo({ url: "/pages/result/result" });
   },
 
   goFavorites() {
+    if (!requireLogin()) {
+      return;
+    }
+
     wx.navigateTo({ url: "/pages/favorites/favorites" });
   },
 

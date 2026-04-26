@@ -68,4 +68,28 @@ export class FilesController {
   ) {
     return ok(await this.filesService.upload(file, user.id));
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: maxUploadSizeBytes,
+      },
+      fileFilter: (_request, file, callback) => {
+        if (!allowedImageMimeTypes.has(file.mimetype)) {
+          callback(new BadRequestException('unsupported image type'), false);
+          return;
+        }
+
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadAvatar(
+    @CurrentUser() user: RequestUser,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return ok(await this.filesService.upload(file, user.id));
+  }
 }

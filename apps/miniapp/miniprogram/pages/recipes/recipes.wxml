@@ -22,23 +22,31 @@
   <view class="recipe-list">
     <block wx:for="{{recipes}}" wx:key="name">
       <view class="recipe-item soft-card">
-        <image class="recipe-img" src="{{item.image}}" mode="aspectFill"></image>
+        <image wx:if="{{item.image}}" class="recipe-img" src="{{item.image}}" mode="aspectFill"></image>
+        <view wx:else class="recipe-img recipe-img-placeholder">
+          <t-icon class="tm-icon" name="rice-ball" size="38rpx" color="#B7895C" />
+        </view>
         <view class="recipe-info">
           <view class="recipe-top">
             <text class="recipe-name">{{item.name}}</text>
-            <view class="more-btn">
+            <view
+              class="more-btn"
+              data-id="{{item.id}}"
+              data-favorite="{{item.isFavorite ? '1' : '0'}}"
+              catchtap="showRecipeMenu"
+            >
               <t-icon class="tm-icon" name="more" size="32rpx" color="#C5BEB8" />
             </view>
           </view>
           <text class="recipe-meta">{{item.meta}}</text>
-          <view class="recipe-bottom">
-            <view class="meta-tag">
+          <view wx:if="{{item.time || item.isFavorite}}" class="recipe-bottom">
+            <view wx:if="{{item.time}}" class="meta-tag">
               <t-icon class="tm-icon icon-inline" name="time" size="24rpx" color="#B7895C" />
               <text>{{item.time}}</text>
             </view>
-            <view class="meta-tag">
+            <view wx:if="{{item.isFavorite}}" class="meta-tag favorite-tag">
               <t-icon class="tm-icon icon-inline" name="heart" size="24rpx" color="#FF6B6B" />
-              <text>{{item.likes}}</text>
+              <text>已收藏</text>
             </view>
           </view>
         </view>

@@ -7,6 +7,10 @@
     "pages/add-recipe/add-recipe",
     "pages/favorites/favorites",
     "pages/add-takeout/add-takeout",
+    "pages/external-link/external-link",
+    "pages/groups/groups",
+    "pages/group-invite/group-invite",
+    "pages/group-members/group-members",
     "pages/profile/profile"
   ],
   "window": {
@@ -15,7 +19,7 @@
     "backgroundColor": "#FFF8F5"
   },
   "usingComponents": {
-    "t-icon": "tdesign-miniprogram/icon/icon"
+    "t-icon": "/components/t-icon/t-icon"
   },
   "style": "v2",
   "lazyCodeLoading": "requiredComponents",

@@ -28,7 +28,7 @@ export class CreateMenuItemDto {
   description?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   coverImageUrl?: string;
 
   @IsArray()
@@ -72,7 +72,7 @@ export class CreateMenuItemDto {
   platform?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   externalUrl?: string;
 
   @IsOptional()
@@ -88,7 +88,7 @@ export class CreateMenuItemDto {
   sourceName?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   sourceUrl?: string;
 
   @IsOptional()
